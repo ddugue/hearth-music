@@ -1,0 +1,6 @@
+#!/bin/sh
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export FLASK_APP=music-player.py
+export FLASK_DEBUG=1
+cd src && ../var/venv/bin/flask run
