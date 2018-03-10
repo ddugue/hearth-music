@@ -17,6 +17,7 @@ def hello_world():
 
 #-- CLI Commands
 import click
+import mutagen
 @app.cli.command()
 def scan():
     """Initialize the database."""
