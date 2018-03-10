@@ -3,8 +3,7 @@ from flask import Flask
 from models import db, Genre
 
 app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../var/musiclib.db'
+app.config.from_json('../etc/config.json')
 db.init_app(app)
 
 @app.route('/')
@@ -17,7 +16,9 @@ def hello_world():
 
 #-- CLI Commands
 import click
+import os
 import mutagen
+from mutagen.easyid3 import EasyID3
 @app.cli.command()
 def scan():
     """Initialize the database."""
@@ -31,3 +32,14 @@ def scan():
     acid = Genre(name="Acid Jazz")
     db.session.add(acid)
     db.session.commit()
+
+    click.echo('Scanning music library...')
+    for dirpath, dirs, filenames in os.walk(app.config['MUSIC_LIBRARY']):
+        for f in filenames:
+            # meta = EasyID3(os.path.join(dirpath, f))
+            # if meta:
+            #     print(meta.keys())
+            m = mutagen.File(os.path.join(dirpath, f))
+            if m:
+                print(m.info)
+                print(m.tags.keys())
