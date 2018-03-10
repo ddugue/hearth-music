@@ -14,6 +14,9 @@ class Genre(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(32))
 
+    def __repr__(self):
+        return u'<Genre {0.name}>'.format(self)
+
 # class Track(db.Model):
 #     __tablename__ = 'track'
 
