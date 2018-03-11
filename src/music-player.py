@@ -18,6 +18,7 @@ def hello_world():
 import click
 import os
 import mutagen
+import metadata
 from mutagen.easyid3 import EasyID3
 @app.cli.command()
 def scan():
@@ -39,7 +40,7 @@ def scan():
             # meta = EasyID3(os.path.join(dirpath, f))
             # if meta:
             #     print(meta.keys())
-            m = mutagen.File(os.path.join(dirpath, f))
-            if m:
-                print(m.info)
-                print(m.tags.keys())
+            print(metadata.get_track_info(dirpath, f))
+            # if m:
+            #     print(m.info)
+            #     print(m.tags.keys())
