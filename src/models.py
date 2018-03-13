@@ -1,91 +1,158 @@
+import uuid
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, func
 
 from flask import Flask
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
 
-# class Artist(db.Model):
-#     pass
-
 class Genre(db.Model):
+    __tablename__ = 'genre'
+
     id = Column(Integer, primary_key=True)
-    name = Column(String(32))
+    name = Column(String(32), nullable=False)
+    cover = Column(String(128))
+
+    @classmethod
+    def get_or_create(cls, genre, *args, **kwargs):
+        created = False
+        name = genre.strip()
+        instance = Genre.query.filter(func.lower(Genre.name) == func.lower(name)).first()
+        if not instance:
+            created = True
+            instance = Genre(name=name)
+            db.session.add(instance)
+            db.session.flush()
+        return instance, created
 
     def __repr__(self):
         return u'<Genre {0.name}>'.format(self)
 
-# class Track(db.Model):
-#     __tablename__ = 'track'
+class Artist(db.Model):
+    __tablename__ = 'artist'
 
-#     id = Column(Integer, primary_key=True)
-#     artist = Column(String(200))
-#     title = Column(String(240))
-#     filename = Column(String(256))
-#     track_num = Column(Integer)
-#     mtime = Column(Integer)
-#     album_id = Column(Integer, ForeignKey('album.id'))
-#     album = relationship(
-#         'Album',
-#         backref=backref('tracks', lazy='dynamic')
-#     )
+    id = Column(Integer, primary_key=True)
+    name = Column(String(128), index=True, nullable=False)
+    albums = relationship('Album', backref='artist', lazy=True)
 
-#     def __repr__(self):
-#         return u'<Track {0.artist} - {0.title}>'.format(self)
+    @classmethod
+    def get_or_create(cls, artist, *args, **kwargs):
+        created = False
+        name = artist.strip()
+        instance = Artist.query.filter(func.lower(Artist.name) == func.lower(name)).first()
+        if not instance:
+            created = True
+            instance = Artist(name=name)
+            db.session.add(instance)
+            db.session.flush()
+        return instance, created
 
-#     @property
-#     def serialize(self):
-#         return {
-#             'artist': self.artist,
-#             'title': self.title,
-#             'album_id': self.album.id if self.album else None,
-#             'track': self.track_num,
-#             'id': self.id
-#         }
+    def __repr__(self):
+        return u'<Artist {0.name}>'.format(self)
+
+class Album(db.Model):
+    __tablename__ = 'album'
+
+    id = Column(Integer, primary_key=True)
+    uuid =  Column(String(33), index=True)
+    name = Column(String(128), index=True)
+    year = Column(Integer)
+
+    cover = Column(String(128))
+    artist_id = Column(Integer, ForeignKey('artist.id'), nullable=False)
+
+    tracks = relationship('Track', backref='album', lazy=True)
+    discogs_id = Column(String(32))
+    musicbrainz_id = Column(String(32))
+
+    def __repr__(self):
+        return u'<Album {0.artist} - {0.name}>'.format(self)
+
+    @classmethod
+    def get_or_create(cls, album, albumartist, year, cover, discogs_id,
+                      musicbrainz_id, *args, **kwargs):
+
+        created = False
+        name = album.strip()
+        uuid = None
+        if discogs_id:
+            instance = Album.query.filter_by(discogs_id=discogs_id).first()
+            uuid = 'd%s' % discogs_id
+        elif musicbrainz_id:
+            instance = Album.query.filter_by(musicbrainz_id=musicbrainz_id).first()
+            uuid = 'm%s' % musicbrainz_id
+        else:
+            instance = Album.query.filter(func.lower(Album.name) == func.lower(name)).first()
+        if not instance:
+            created = True
+            artist, _ = Artist.get_or_create(albumartist)
+            if not uuid:
+                uuid = 'u%s' % uuid.uuid3(uuid.NAMESPACE_DNS, name)
+            instance = Album(
+                uuid=uuid, name=name, year=year, cover=cover, artist=artist,
+                discogs_id=discogs_id, musicbrainz_id=musicbrainz_id)
+            db.session.add(instance)
+            db.session.flush()
+        return instance, created
 
 
-# class Album(db.Model):
-#     __tablename__ = 'album'
+tracks_genre = db.Table('track_genre',
+    Column('track_id', Integer, ForeignKey('track.id'), primary_key=True),
+    Column('genre_id', Integer, ForeignKey('genre.id'), primary_key=True)
+)
 
-#     id = Column(Integer, primary_key=True)
-#     artist = Column(String(200))
-#     title = Column(String(240))
-#     # TODO: Use a real date format.
-#     date = Column(String(16))
-#     label = Column(String(240))
-#     cat_number = Column(String(32))
-#     cover_art = Column(String(256))  # Filename of cover art, jpg/png.
+tracks_artist = db.Table('track_artist',
+    Column('track_id', Integer, ForeignKey('track.id'), primary_key=True),
+    Column('artist_id', Integer, ForeignKey('artist.id'), primary_key=True)
+)
 
-#     def __init__(self, artist, title, date=None, label=None, cat_number=None,
-#                  cover_art=None):
-#         self.artist = artist
-#         self.title = title
-#         self.date = date
-#         self.label = label
-#         self.cat_number = cat_number
-#         self.cover_art = cover_art
+class Track(db.Model):
+    __tablename__ = 'track'
 
-#     def __repr__(self):
-#         return (
-#             u'<Album {0.artist} - ' + u'{0.title} ({0.date})>'
-#         ).format(self)
+    id = Column(Integer, primary_key=True)
+    uuid =  Column(String(36), index=True)
 
-#     @property
-#     def serialize(self):
-#         tracks = Track.query.filter_by(album_id=self.id)\
-#                             .order_by(Track.track_num)
-#         cover_art = None
-#         if self.cover_art is not None:
-#             cover_art = '/static/music/' + self.cover_art
-#         return {
-#             'artist': self.artist,
-#             'title': self.title,
-#             'date': self.date,
-#             'label': self.label,
-#             'cat_number': self.cat_number,
-#             'cover_art': cover_art,
-#             'track_ids': [t.id for t in tracks],
-#             'id': self.id,
-#         }
+    title = Column(String(128), index=True)
+    filepath = Column(String(128))
+    bitrate = Column(Integer)
+    size = Column(Integer)
+    length = Column(Float)
+
+    track = Column(Integer, index=True)
+    disk = Column(Integer, index=True)
+
+    album_id = Column(Integer, ForeignKey('album.id'))
+
+    artists = relationship('Artist', secondary=tracks_artist, lazy='subquery',
+                           backref=backref('tracks', lazy=True))
+    genres = relationship('Genre', secondary=tracks_genre, lazy='subquery',
+                           backref=backref('tracks', lazy=True))
+
+    @classmethod
+    def get_or_create(cls, title, filepath, bitrate, size, length, track, disk,
+                      album, artists, genres, *args, **kwargs):
+
+        created = False
+        title = title.strip()
+        instance = Track.query.filter(func.lower(Track.title) == func.lower(title))\
+                              .filter_by(album_id=album.id).first()
+        if not instance:
+            created = True
+            instance = Track(
+                title=title, filepath=filepath, bitrate=bitrate, size=size,
+                length=length, track=track, disk=disk, album=album,
+                uuid="%s-%s" % (album.uuid, track)
+            )
+            for artist in artists:
+                instance.artists.append(Artist.get_or_create(artist)[0])
+            for genre in genres:
+                instance.genres.append(Genre.get_or_create(genre)[0])
+            db.session.add(instance)
+            db.session.flush()
+        return instance, created
+
+    def __repr__(self):
+        return u'<Track {0.title}>'.format(self)
