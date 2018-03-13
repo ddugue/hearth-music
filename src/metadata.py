@@ -91,7 +91,7 @@ def get_track_info_mp3(filepath, tags, stream, cover):
         "title": extract(tag('TIT2')),
         "track": track,
         "artists": tag('TPE1'),
-        "albumartist": extract(tag('TPE2')),
+        "albumartist": extract(tag('TPE2')) or extract(tags.get('TPE1')),
         "album": extract(tag('TALB')),
         "discogs_id": bytes(discogs) if discogs else None,
         "musicbrainz_id": "",
