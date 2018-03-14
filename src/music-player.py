@@ -20,13 +20,15 @@ import mutagen
 import metadata
 from mutagen.easyid3 import EasyID3
 @app.cli.command()
-def scan():
+@click.option('--dry-run', is_flag=True)
+def scan(dry_run):
     """Initialize the database."""
+    if dry_run: click.echo('Running in dry run')
     click.echo('Clearing previous db...')
-    db.drop_all()
+    if not dry_run: db.drop_all()
 
     click.echo('Initializing the db...')
-    db.create_all()
+    if not dry_run: db.create_all()
 
     # click.echo('Installing fixtures...')
     # acid = Genre(name="Acid Jazz")
@@ -37,6 +39,9 @@ def scan():
     for dirpath, dirs, filenames in os.walk(app.config['MUSIC_LIBRARY']):
         for f in filenames:
             track_info = metadata.get_track_info(dirpath, f)
+            if dry_run:
+                print(track_info)
+                continue
             if not album:
                 album, created = Album.get_or_create(**track_info)
                 if created:
@@ -48,7 +53,7 @@ def scan():
                 if created:
                     click.echo('Adding track {0.title} from {0.album.name}...'.format(track))
         album = None
-        db.session.commit()
+        if not dry_run: db.session.commit()
 
             # meta = EasyID3(os.path.join(dirpath, f))
             # if meta:
