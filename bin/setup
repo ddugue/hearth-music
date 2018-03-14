@@ -1,0 +1,6 @@
+#!/bin/sh
+
+rm -fr var/
+mkdir var/
+cd var/ && virtualenv --python=python3.6 venv/
+cd .. && var/venv/bin/pip install -r etc/requirements.txt
