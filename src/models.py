@@ -36,7 +36,7 @@ class Artist(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(128), index=True, nullable=False)
-    albums = relationship('Album', backref='artist', lazy=True)
+    albums = relationship('Album', backref=db.backref('artist', lazy='joined'))
 
     @classmethod
     def get_or_create(cls, artist, *args, **kwargs):
@@ -76,6 +76,8 @@ class Album(db.Model):
             "name": self.name,
             "cover": self.cover,
             "uuid": self.uuid,
+            "artistId": self.artist_id,
+            "artistName": self.artist.name,
         }
 
     @classmethod
