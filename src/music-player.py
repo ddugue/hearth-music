@@ -23,6 +23,17 @@ def albums():
         "items": [album.serialize() for album in paginator.items],
     })
 
+@app.route('/albums/<int:album_id>')
+def album(album_id):
+    album = Album.query.get(album_id)
+    if not album: abort(404)
+    return jsonify(album.serialize())
+
+@app.route('/albums/<int:album_id>/tracks')
+def album_tracks(album_id):
+    tracks = Track.query.filter_by(album_id=album_id).order_by(Track.disk.asc(), Track.track.asc())
+    return jsonify([track.serialize() for track in tracks])
+
 @app.route('/cover/<uuid>')
 def cover(uuid):
     album = Album.query.filter_by(uuid=uuid).first()

@@ -28,6 +28,13 @@ class Genre(db.Model):
             db.session.flush()
         return instance, created
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "uri":"/genres/%s" % self.id,
+            "name": self.name,
+        }
+
     def __repr__(self):
         return u'<Genre {0.name}>'.format(self)
 
@@ -36,6 +43,7 @@ class Artist(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(128), index=True, nullable=False)
+    cover = Column(String(128))
     albums = relationship('Album', backref=db.backref('artist', lazy='joined'))
 
     @classmethod
@@ -49,6 +57,13 @@ class Artist(db.Model):
             db.session.add(instance)
             db.session.flush()
         return instance, created
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "uri":"/artists/%s" % self.id,
+            "name": self.name,
+        }
 
     def __repr__(self):
         return u'<Artist {0.name}>'.format(self)
@@ -64,7 +79,7 @@ class Album(db.Model):
     cover = Column(String(128))
     artist_id = Column(Integer, ForeignKey('artist.id'), nullable=False)
 
-    tracks = relationship('Track', backref='album', lazy=True)
+    tracks = relationship('Track', backref=db.backref('album', lazy='joined'), lazy=True)
     discogs_id = Column(String(32))
     musicbrainz_id = Column(String(32))
 
@@ -73,11 +88,13 @@ class Album(db.Model):
 
     def serialize(self):
         return {
+            "url": "/albums/%s" % self.id,
+            "id": self.id,
             "name": self.name,
             "cover": "/cover/%s" % self.uuid,
+            "tracks": "/albums/%s/tracks" % self.id,
             "uuid": self.uuid,
-            "artistId": self.artist_id,
-            "artistName": self.artist.name,
+            "artist": self.artist.serialize(),
         }
 
     @classmethod
@@ -139,6 +156,20 @@ class Track(db.Model):
                            backref=backref('tracks', lazy=True))
     genres = relationship('Genre', secondary=tracks_genre, lazy='subquery',
                            backref=backref('tracks', lazy=True))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "uuid": self.id,
+            "title": self.title,
+            "track": self.track,
+            "disk": self.disk,
+            "length": self.length,
+            "music": "/music/%s" % self.uuid,
+            "album": self.album.serialize(),
+            "artists": [artist.serialize() for artist in self.artists],
+            "genres": [genre.serialize() for genre in self.genres],
+        }
 
     @classmethod
     def get_or_create(cls, title, filepath, bitrate, size, length, track, disk,
