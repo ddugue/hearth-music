@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, request, abort, send_file
+from flask import Flask, jsonify, request, abort, send_file, Response
 from models import db, Genre, Album, Track
 
 app = Flask(__name__)
@@ -53,9 +53,13 @@ def music(uuid):
     track = Track.query.filter_by(uuid=uuid).first()
     if not track or not track.filepath: abort(404)
     filename = track.filepath
+    def generate():
+        f = open(filename, "rb")
+        for chunk in iter(lambda: f.read(4096), b''):
+            yield chunk
     # if filename.endswith('.mp3'):
     #     return send_file(filename, mimetype='image/png', cache_timeout=60 * 60 * 24 * 365)
-    return send_file(generate(), mimetype='audio/mpeg', cache_timeout=60 * 60 * 24 * 365)
+    return Response(generate(), mimetype='audio/mpeg')
 #-- CLI Commands
 import click
 import os
