@@ -81,8 +81,22 @@ def get_track_info_mp4(filepath, tags, stream, cover=None):
 
 def get_track_info_mp3(filepath, tags, stream, cover):
     """ Parses track information from mp3 file """
+    print(tags.keys())
     tag = lambda t: get_tag(tags, t)
     discogs = extract(list(filter(lambda x: x.desc == 'DISCOGS_RELEASE_ID', tags.getall('TXXX'))))
+    musicbrainz = extract(list(filter(lambda x: x.desc == 'MusicBrainz Album Id', tags.getall('TXXX'))))
+    if musicbrainz: musicbrainz = extract(musicbrainz.text)
+    if not cover:
+        coverinfo = tags.get('APIC:')
+        if coverinfo:
+            if coverinfo.mime == 'image/jpeg':
+                cover = os.path.dirname(filepath) + '/cover.jpg'
+            else:
+                raise ValueError('Not supporting %s' % coverinfo.mime)
+            if cover:
+                f = open(cover, 'wb+')
+                f.write(coverinfo.data)
+                f.close()
 
     track = sanitize_track(extract(tag('TRCK')))
 
@@ -94,7 +108,7 @@ def get_track_info_mp3(filepath, tags, stream, cover):
         "albumartist": extract(tag('TPE2')) or extract(tags.get('TPE1')),
         "album": extract(tag('TALB')),
         "discogs_id": bytes(discogs) if discogs else None,
-        "musicbrainz_id": "",
+        "musicbrainz_id": musicbrainz,
         "disk": sanitize_disk(extract(tag('TPOS'))),
         "year": sanitize_year(extract(date)),
         "genres": sanitize_genres(tag('TCON')),
