@@ -71,6 +71,13 @@ class Album(db.Model):
     def __repr__(self):
         return u'<Album {0.artist} - {0.name}>'.format(self)
 
+    def serialize(self):
+        return {
+            "name": self.name,
+            "cover": self.cover,
+            "uuid": self.uuid,
+        }
+
     @classmethod
     def get_or_create(cls, album, albumartist, year, cover, discogs_id,
                       musicbrainz_id, *args, **kwargs):

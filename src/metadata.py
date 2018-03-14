@@ -81,7 +81,6 @@ def get_track_info_mp4(filepath, tags, stream, cover=None):
 
 def get_track_info_mp3(filepath, tags, stream, cover):
     """ Parses track information from mp3 file """
-    print(tags.keys())
     tag = lambda t: get_tag(tags, t)
     discogs = extract(list(filter(lambda x: x.desc == 'DISCOGS_RELEASE_ID', tags.getall('TXXX'))))
     musicbrainz = extract(list(filter(lambda x: x.desc == 'MusicBrainz Album Id', tags.getall('TXXX'))))

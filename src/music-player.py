@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from models import db, Genre, Album, Track
 
 app = Flask(__name__)
@@ -12,6 +12,16 @@ def hello_world():
     albums = list(Album.query.all())
 
     return jsonify(albums)
+
+@app.route('/albums')
+def albums():
+    page = request.args.get('page', 1, type=int)
+    paginator = Album.query.order_by(Album.name.desc()).paginate(page, 20)
+    return jsonify({
+        "page": page,
+        "next": ("/albums?page=%s" % paginator.next_num) if paginator.has_next else None,
+        "items": [album.serialize() for album in paginator.items],
+    })
 
 #-- CLI Commands
 import click
