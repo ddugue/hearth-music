@@ -15,6 +15,7 @@ def hello_world():
 
 @app.route('/albums')
 def albums():
+    """ Return a list of albums that is in the library """
     page = request.args.get('page', 1, type=int)
     paginator = Album.query.order_by(Album.name.desc()).paginate(page, 20)
     return jsonify({
@@ -25,17 +26,20 @@ def albums():
 
 @app.route('/albums/<int:album_id>')
 def album(album_id):
+    """ Return information on a single album """
     album = Album.query.get(album_id)
     if not album: abort(404)
     return jsonify(album.serialize())
 
 @app.route('/albums/<int:album_id>/tracks')
 def album_tracks(album_id):
+    """ Return tracks that are in an album """
     tracks = Track.query.filter_by(album_id=album_id).order_by(Track.disk.asc(), Track.track.asc())
     return jsonify([track.serialize() for track in tracks])
 
 @app.route('/cover/<uuid>')
 def cover(uuid):
+    """ Return a cacheable cover for an album """
     album = Album.query.filter_by(uuid=uuid).first()
     if not album or not album.cover: abort(404)
     filename = album.cover
