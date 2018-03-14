@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort, send_file
 from models import db, Genre, Album, Track
 
 app = Flask(__name__)
@@ -22,6 +22,15 @@ def albums():
         "next": ("/albums?page=%s" % paginator.next_num) if paginator.has_next else None,
         "items": [album.serialize() for album in paginator.items],
     })
+
+@app.route('/cover/<uuid>')
+def cover(uuid):
+    album = Album.query.filter_by(uuid=uuid).first()
+    if not album or not album.cover: abort(404)
+    filename = album.cover
+    if filename.endswith('png'):
+        return send_file(filename, mimetype='image/png', cache_timeout=60 * 60 * 24 * 365)
+    return send_file(filename, mimetype='image/jpg', cache_timeout=60 * 60 * 24 * 365)
 
 #-- CLI Commands
 import click

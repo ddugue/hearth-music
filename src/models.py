@@ -74,7 +74,7 @@ class Album(db.Model):
     def serialize(self):
         return {
             "name": self.name,
-            "cover": self.cover,
+            "cover": "/cover/%s" % self.uuid,
             "uuid": self.uuid,
             "artistId": self.artist_id,
             "artistName": self.artist.name,
