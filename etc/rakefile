@@ -1,0 +1,29 @@
+
+def path p
+  return File.join(Dir.pwd, p)
+end
+
+$sass = path 'node_modules/node-sass/bin/node-sass'
+
+def newdir p
+  return FileUtils.mkdir_p p
+end
+
+def execute cmd
+  sh cmd
+end
+
+task :template do
+  newdir "dist/"
+  sh "cp src/index.html dist/index.html"
+end
+task :assets do
+  newdir "dist/"
+  sh "cp assets/cassette.svg dist/cassette.svg"
+end
+task :sass do
+  newdir "dist/css"
+  sh "#{$sass} src/css/base.scss > dist/css/base.css"
+end
+
+task :default => [:sass, :template, :assets]

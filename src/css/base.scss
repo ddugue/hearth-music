@@ -1,0 +1,198 @@
+$color-back:#f5e2a9;
+$color-contrast: #e13925;
+$color-brown: #433224;
+$color-brown-2: #4f4230;
+$color-grey: #75685f;
+$color-off:#FAFAF5;
+
+%paper {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    background: #fffffe;
+}
+
+%paper-stripe {
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#cacaca), color-stop(4%, #fff)) 0 4px;
+    background-size: 100% 20px;
+    position: relative;
+    border: 1px solid #FFF;
+
+}
+
+body {
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    font-size: 14;
+    // background: $color-off;
+    background: $color-brown;
+    color: $color-brown;
+
+    display:flex;
+
+    nav {
+        margin: 1em;
+        min-width: 250px;
+        padding: 1em 1em 1em 2.4em;
+        @extend %paper;
+        @extend %paper-stripe;
+        &::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            top: 0;
+            left: 30px;
+            bottom: 0;
+            border: 1px solid;
+            border-color: transparent #efe4e4;
+        }
+    }
+
+    main {
+        margin: 0.5em;
+        flex: 1;
+    }
+
+    &:after {
+        content:"";
+        z-index: -1;
+        position: absolute;
+        height: 175px;
+        left: -10px;
+        top: -10px;
+        right: -40px;
+        background: #ffFFFe;
+        // background: linear-gradient(to top,
+        //                             $color-contrast 10%,
+        //                             $color-contrast 10%,
+        //                             $color-back 10%,
+        //                             $color-back 12%,
+        //                             $color-contrast 12%,
+        //                             $color-contrast 20%,
+        //                             $color-back 20%,
+        //                             $color-back 23%,
+        //                             $color-contrast 23%,
+        //                             $color-contrast 31%,
+        //                             $color-back 31%,
+        //                             $color-back 33%,
+        //                             $color-contrast 33%,
+        //                             $color-contrast 38%,
+        //                             $color-back 38%,
+        //                             $color-back 41%,
+        //                             $color-contrast 41%,
+        //                             $color-contrast 46%,
+        //                             $color-back 46%,
+        //                             $color-back 51%,
+        //                             $color-contrast 51%,
+        //                             $color-contrast 53%,
+        //                             $color-back 53%,
+        //                             $color-back 58%,
+        //                             $color-contrast 58%,
+        //                             $color-contrast 60%,
+        //                             $color-back 60%,
+        //                             $color-back 68%,
+        //                             $color-contrast 68%,
+        //                             $color-contrast 69%,
+        //                             $color-back 69%,
+        //                             $color-back 100%);
+        background: linear-gradient(to top,
+                                    $color-contrast 5%,
+                                    $color-contrast 5%,
+                                    $color-back 5%,
+                                    $color-back 6%,
+                                    $color-contrast 6%,
+                                    $color-contrast 10%,
+                                    $color-back 10%,
+                                    $color-back 11.5%,
+                                    $color-contrast 11.5%,
+                                    $color-contrast 15.5%,
+                                    $color-back 15.5%,
+                                    $color-back 16.5%,
+                                    $color-contrast 16.5%,
+                                    $color-contrast 19%,
+                                    $color-back 19%,
+                                    $color-back 20.5%,
+                                    $color-contrast 20.5%,
+                                    $color-contrast 23%,
+                                    $color-back 23%,
+                                    $color-back 25.5%,
+                                    $color-contrast 25.5%,
+                                    $color-contrast 26.5%,
+                                    $color-back 26.5%,
+                                    $color-back 29%,
+                                    $color-contrast 29%,
+                                    $color-contrast 30%,
+                                    $color-back 30%,
+                                    $color-back 34%,
+                                    $color-back 100%);
+        // border-bottom: solid 20px $color-contrast
+        // box-shadow: inset 0 0 10px rgba(0,0,0,0.47);
+    }
+}
+
+a {
+    font-variant: small-caps;
+    &.active {
+        font-weight: bold;
+    }
+}
+
+h1, h2, h3 {
+    font-family: 'Permanent Marker', cursive;
+    margin: 0;
+    line-height: 1.3em;
+}
+
+#albums {
+    display: flex;
+
+    img {
+        @extend %paper;
+        width: 200px;
+        height: 200px;
+    }
+
+    figcaption {
+        @extend %paper;
+        @extend %paper-stripe;
+        padding: 0.5em;
+        margin: 0.25em 0;
+        padding: 0.5em 0.5em 0.5em 2.4em;
+        box-sizing: border-box;
+        width: 200px;
+        mask-image: url(#mask1);
+
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 10px;
+            top: 10px;
+            border-radius: 50%;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.47);
+            background: $color-brown;
+        }
+    }
+
+    figure {
+        margin: 0.5em;
+    }
+}
+
+header {
+    height: 110px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+footer {
+    @extend %paper;
+    width: 100%;
+    padding: 1em;
+    position: fixed;
+    bottom: 0.5em;
+}
+
+h1 { font-size: 2.6em }
+h2 { font-size: 2em }
+h3 { font-size: 1.7em }

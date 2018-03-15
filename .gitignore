@@ -1,3 +1,5 @@
 var/
 __pycache__/
 /etc/config.json
+dist/
+node_modules/

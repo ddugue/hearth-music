@@ -1,0 +1,4 @@
+
+set -e
+rake -f etc/rakefile
+google-chrome-stable dist/index.html
