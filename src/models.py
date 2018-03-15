@@ -165,7 +165,7 @@ class Track(db.Model):
             "track": self.track,
             "disk": self.disk,
             "length": self.length,
-            "music": "/music/%s" % self.uuid,
+            "music": "/songs/%s" % self.uuid,
             "album": self.album.serialize(),
             "artists": [artist.serialize() for artist in self.artists],
             "genres": [genre.serialize() for genre in self.genres],

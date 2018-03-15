@@ -2,4 +2,4 @@
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export FLASK_APP=music-player.py
-cd src && ../var/venv/bin/flask scan
+cd src && ../var/venv/bin/flask scan --dry-run
