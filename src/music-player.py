@@ -47,18 +47,20 @@ def cover(uuid):
         return send_file(filename, mimetype='image/png', cache_timeout=60 * 60 * 24 * 365)
     return send_file(filename, mimetype='image/jpg', cache_timeout=60 * 60 * 24 * 365)
 
-@app.route('/music/<uuid>')
+@app.route('/songs/<uuid>')
 def music(uuid):
     """ Return a cacheable track music """
+    seek = request.args.get('seek', 0, type=int) # In seconds
     track = Track.query.filter_by(uuid=uuid).first()
     if not track or not track.filepath: abort(404)
     filename = track.filepath
     def generate():
         f = open(filename, "rb")
+        if seek:
+            f.seek(track.bitrate * seek // 8)
+
         for chunk in iter(lambda: f.read(4096), b''):
             yield chunk
-    # if filename.endswith('.mp3'):
-    #     return send_file(filename, mimetype='image/png', cache_timeout=60 * 60 * 24 * 365)
     return Response(generate(), mimetype='audio/mpeg')
 #-- CLI Commands
 import click
