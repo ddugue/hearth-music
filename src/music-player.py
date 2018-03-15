@@ -1,6 +1,8 @@
-
+from pydub import AudioSegment
 from flask import Flask, jsonify, request, abort, send_file, Response
 from models import db, Genre, Album, Track
+import utils
+import io
 
 app = Flask(__name__)
 app.config.from_json('../etc/config.json')
@@ -54,14 +56,28 @@ def music(uuid):
     track = Track.query.filter_by(uuid=uuid).first()
     if not track or not track.filepath: abort(404)
     filename = track.filepath
-    def generate():
-        f = open(filename, "rb")
-        if seek:
-            f.seek(track.bitrate * seek // 8)
+    if filename.endswith('m4a'):
+        f = AudioSegment.from_file(filename, "m4a")
 
-        for chunk in iter(lambda: f.read(4096), b''):
-            yield chunk
-    return Response(generate(), mimetype='audio/mpeg')
+        if seek:
+            f = f[seek * 1000:]
+
+        output = io.BytesIO()
+        f.export(output)
+
+        def generate():
+            for chunk in iter(lambda: output.read(4096), b''):
+                yield chunk
+        return Response(generate(), mimetype='audio/mp4')
+    else:
+        def generate():
+            f = open(filename, "rb")
+            if seek:
+                f.seek(track.bitrate * seek // 8)
+
+            for chunk in iter(lambda: f.read(4096), b''):
+                yield chunk
+        return Response(generate(), mimetype='audio/mpeg')
 #-- CLI Commands
 import click
 import os
@@ -87,10 +103,14 @@ def scan(dry_run):
     click.echo('Scanning music library...')
     for dirpath, dirs, filenames in os.walk(app.config['MUSIC_LIBRARY']):
         for f in filenames:
+            f = utils.convert_to_mp3(dirpath, f)
             track_info = metadata.get_track_info(dirpath, f)
             if dry_run:
                 print(track_info)
                 continue
+            # If file is not an mp3 we convert it to an mp3
+            # track_info["filepath"] = utils.convert_to_mp3(track_info)
+
             if not album:
                 album, created = Album.get_or_create(**track_info)
                 if created:
