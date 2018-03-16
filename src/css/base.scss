@@ -5,44 +5,232 @@ $color-brown-2: #4f4230;
 $color-grey: #75685f;
 $color-off:#FAFAF5;
 
+// Walkman color
+$color-blue: #48788f;
+$color-light-blue: #84bcd0;
+$color-light: #dbd7db;
+$color-black: #1f1d1d;
+$easing: cubic-bezier(.25,.8,.25,1);
+///////////////////////////////////////////////////////////
+// Plain SASS Trigonometry Algorithm in Taylor Expansion //
+//                                                       //
+// Based on                                              //
+//      http://japborst.net/posts/sass-sines-and-cosines //
+///////////////////////////////////////////////////////////
+
+$pi: 3.14159265359;
+$_precision: 10;
+
+@function pow($base, $exp) {
+  $value: $base;
+  @if $exp > 1 {
+    @for $i from 2 through $exp {
+      $value: $value * $base;
+    }
+  }
+  @if $exp < 1{
+    @for $i from 0 through -$exp {
+      $value: $value / $base;
+    }
+  }
+  @return $value;
+}
+
+@function fact($num) {
+  $fact: 1;
+  @if $num > 0{
+    @for $i from 1 through $num {
+      $fact: $fact * $i;
+    }
+  }
+  @return $fact;
+}
+
+@function _to_unitless_rad($angle) {
+  @if unit($angle) == "deg" {
+    $angle: $angle / 180deg * $pi;
+  }
+  @if unit($angle) == "rad" {
+    $angle: $angle / 1rad;
+  }
+  @return $angle;
+}
+
+@function sin($angle){
+  $a: _to_unitless_rad($angle);
+  $sin: $a;
+  @for $n from 1 through $_precision {
+    $sin: $sin + (pow(-1, $n) / fact(2 * $n + 1) ) * pow($a, (2 * $n + 1));
+  }
+  @return $sin;
+}
+
+@function cos($angle){
+  $a: _to_unitless_rad($angle);
+  $cos: 1;
+  @for $n from 1 through $_precision {
+    $cos: $cos + ( pow(-1,$n) / fact(2*$n) ) * pow($a,2*$n);
+  }
+  @return $cos;
+}
+
+@function tan($angle){
+  @return sin($angle) / cos($angle);
+}
+
+%shadow-1 {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  // transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+%shadow-2 {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+%shadow-3 {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+%shadow-4 {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+%shadow-5 {
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+
 %paper {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     background: #fffffe;
 }
 
 %paper-stripe {
+    @extend %shadow-1;
+
+    opacity: 0.975;
     background: -webkit-gradient(linear, 0 0, 0 100%, from(#cacaca), color-stop(4%, #fff)) 0 4px;
     background-size: 100% 20px;
     position: relative;
     border: 1px solid #FFF;
+    padding-left: 3.2em !important;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 4px;
+        top: 0;
+        left: 35px;
+        bottom: 0;
+        border: 1px solid;
+        border-color: transparent #efe4e4;
+    }
 }
 
+@function yPoint($y, $radius, $angle) {
+    @return $y - ($radius * sin($angle))
+}
+
+@function xPoint($x, $radius, $angle) {
+    @return $x + ($radius * cos($angle))
+}
+@mixin hole($radius, $x, $y) {
+    clip-path: polygon(0% 0%, 0% 100%, $x 100%,
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       xPoint($x, $radius, 240deg) yPoint($y, $radius, 240deg),
+                       xPoint($x, $radius, 210deg) yPoint($y, $radius, 210deg),
+                       xPoint($x, $radius, 180deg) yPoint($y, $radius, 180deg),
+                       xPoint($x, $radius, 150deg) yPoint($y, $radius, 150deg),
+                       xPoint($x, $radius, 120deg) yPoint($y, $radius, 120deg),
+                       xPoint($x, $radius, 90deg) yPoint($y, $radius, 90deg),
+                       xPoint($x, $radius, 60deg) yPoint($y, $radius, 60deg),
+                       xPoint($x, $radius, 30deg) yPoint($y, $radius, 30deg),
+                       xPoint($x, $radius, 0deg) yPoint($y, $radius, 0deg),
+                       xPoint($x, $radius, 330deg) yPoint($y, $radius, 330deg),
+                       xPoint($x, $radius, 300deg) yPoint($y, $radius, 300deg),
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       $x 100%, 100% 100%, 100% 0%);
+    -webkit-clip-path: polygon(0% 0%, 0% 100%, $x 100%,
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       xPoint($x, $radius, 240deg) yPoint($y, $radius, 240deg),
+                       xPoint($x, $radius, 210deg) yPoint($y, $radius, 210deg),
+                       xPoint($x, $radius, 180deg) yPoint($y, $radius, 180deg),
+                       xPoint($x, $radius, 150deg) yPoint($y, $radius, 150deg),
+                       xPoint($x, $radius, 120deg) yPoint($y, $radius, 120deg),
+                       xPoint($x, $radius, 90deg) yPoint($y, $radius, 90deg),
+                       xPoint($x, $radius, 60deg) yPoint($y, $radius, 60deg),
+                       xPoint($x, $radius, 30deg) yPoint($y, $radius, 30deg),
+                       xPoint($x, $radius, 0deg) yPoint($y, $radius, 0deg),
+                       xPoint($x, $radius, 330deg) yPoint($y, $radius, 330deg),
+                       xPoint($x, $radius, 300deg) yPoint($y, $radius, 300deg),
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       $x 100%, 100% 100%, 100% 0%);
+}
+
+$color-yellow-nav: #fbe9c3;
+$color-maroon-nav: #501d0c;
 body {
     margin: 0;
     font-family: 'Lato', sans-serif;
     font-size: 14;
-    // background: $color-off;
     background: $color-brown;
     color: $color-brown;
 
     display:flex;
 
     nav {
+        @extend %shadow-3;
+
+        background: linear-gradient(to right,$color-back 15%,
+                                    $color-yellow-nav 20%,
+                                    $color-yellow-nav 25%,
+                                    $color-back 30%,
+                                    $color-back 85%,
+                                    $color-yellow-nav 90%,
+                                    $color-yellow-nav 95%,
+                                    $color-back 100%);
+        // color:$color-maroon-nav;
+
         margin: 1em;
         min-width: 250px;
-        padding: 1em 1em 1em 2.4em;
-        @extend %paper;
-        @extend %paper-stripe;
-        &::before {
-            content: '';
-            position: absolute;
-            width: 4px;
-            top: 0;
-            left: 30px;
-            bottom: 0;
-            border: 1px solid;
-            border-color: transparent #efe4e4;
+        padding: 1em;
+
+        .logo{
+            position: relative;
+            padding: 1em;
+
+            text-align: center;
+            border: 4px solid $color-brown;
+            // background: $color-yellow-nav;
+            border-radius: 15px;
+            color:$color-back;
+            h2 { font-size: 3em; }
+            & > * {
+                position: relative;
+                z-index: 1
+            }
+            &::after {
+                content: '';
+                position: absolute;
+                background: $color-contrast;
+                border-radius: 10px;
+                z-index: 0;
+                left:5px;
+                top:5px;
+                bottom:5px;
+                right:5px;
+            }
         }
+        // @extend %paper-stripe;
+        // &::before {
+        //     content: '';
+        //     position: absolute;
+        //     width: 4px;
+        //     top: 0;
+        //     left: 30px;
+        //     bottom: 0;
+        //     border: 1px solid;
+        //     border-color: transparent #efe4e4;
+        // }
     }
 
     main {
@@ -55,43 +243,10 @@ body {
         z-index: -1;
         position: absolute;
         height: 175px;
-        left: -10px;
-        top: -10px;
-        right: -40px;
+        left: 0px;
+        top: 0px;
+        right: 0px;
         background: #ffFFFe;
-        // background: linear-gradient(to top,
-        //                             $color-contrast 10%,
-        //                             $color-contrast 10%,
-        //                             $color-back 10%,
-        //                             $color-back 12%,
-        //                             $color-contrast 12%,
-        //                             $color-contrast 20%,
-        //                             $color-back 20%,
-        //                             $color-back 23%,
-        //                             $color-contrast 23%,
-        //                             $color-contrast 31%,
-        //                             $color-back 31%,
-        //                             $color-back 33%,
-        //                             $color-contrast 33%,
-        //                             $color-contrast 38%,
-        //                             $color-back 38%,
-        //                             $color-back 41%,
-        //                             $color-contrast 41%,
-        //                             $color-contrast 46%,
-        //                             $color-back 46%,
-        //                             $color-back 51%,
-        //                             $color-contrast 51%,
-        //                             $color-contrast 53%,
-        //                             $color-back 53%,
-        //                             $color-back 58%,
-        //                             $color-contrast 58%,
-        //                             $color-contrast 60%,
-        //                             $color-back 60%,
-        //                             $color-back 68%,
-        //                             $color-contrast 68%,
-        //                             $color-contrast 69%,
-        //                             $color-back 69%,
-        //                             $color-back 100%);
         background: linear-gradient(to top,
                                     $color-contrast 5%,
                                     $color-contrast 5%,
@@ -122,8 +277,6 @@ body {
                                     $color-back 30%,
                                     $color-back 34%,
                                     $color-back 100%);
-        // border-bottom: solid 20px $color-contrast
-        // box-shadow: inset 0 0 10px rgba(0,0,0,0.47);
     }
 }
 
@@ -144,39 +297,53 @@ h1, h2, h3 {
     display: flex;
 
     img {
-        @extend %paper;
         width: 200px;
         height: 200px;
+        z-index: 1;
     }
 
     figcaption {
-        @extend %paper;
         @extend %paper-stripe;
-        padding: 0.5em;
-        margin: 0.25em 0;
-        padding: 0.5em 0.5em 0.5em 2.4em;
-        box-sizing: border-box;
-        width: 200px;
-        clip-path: url(#hole);
-        -webkit-clip-path: url(#hole);
-        // -webkit-mask-image: url(../hole.svg#mask1);
+        padding:0.5em;
+        z-index: 3;
 
+        // margin: 0.25em 0;
+        // box-sizing: border-box;
+        // width: 200px;
 
-        // &::before {
-        //     content: '';
-        //     position: absolute;
-        //     width: 20px;
-        //     height: 20px;
-        //     left: 10px;
-        //     top: 10px;
-        //     border-radius: 50%;
-        //     box-shadow: inset 0 0 10px rgba(0,0,0,0.47);
-        //     background: $color-brown;
-        // }
+        @include hole(10px, 20px, 30px);
+        position: absolute;
+        bottom: 10px;
+        left:-1px;
+        right:-1px;
     }
 
     figure {
+        @extend %shadow-2;
         margin: 0.5em;
+        position: relative;
+        transition: all 0.3s $easing;
+        &:hover {
+            @extend %shadow-3;
+            transform: scale(1.02);
+        }
+        &:after {
+            content: "";
+            box-shadow: inset 5px 5px 20px rgba(255,255,255,0.1);
+            background:
+            linear-gradient(to bottom,rgba(255,255,255,0.1),transparent),
+            linear-gradient(35deg, transparent, rgba(200,200,200,0.1),transparent);
+
+
+            // background: linear-gradient(45deg, rgba(242,246,248,0) 0%,rgba(216,225,231,0.16) 81%,rgba(181,198,208,0.17) 87%,rgba(224,239,249,0.2) 100%);
+            // background: linear-gradient(45deg, rgba(226,226,226,0.65) 0%,rgba(0,0,0,0) 100%);
+            position: absolute;
+            top:0;
+            bottom:0;
+            left:0;
+            right:0;
+            z-index: 2;
+        }
     }
 }
 
@@ -186,12 +353,47 @@ header {
     flex-direction: column-reverse;
 }
 
+$color-blue: #48788f;
+$color-light-blue: #84bcd0;
+$color-light: #dbd7db;
+$color-black: #1f1d1d;
 footer {
-    @extend %paper;
-    width: 100%;
-    padding: 1em;
+    @extend %shadow-3;
+    background: $color-light-blue;
+    color: $color-light;
+    font-weight: bold;
+    text-shadow: 1px 1px transparentize($color-black, 0.7);
+    padding: 2.5em 1em 1em 1em;
     position: fixed;
-    bottom: 0.5em;
+    bottom: 1em;
+    right: 1em;
+    left: 315px;
+    height: 75px;
+    border-radius: 5px;
+    border: 2px solid $color-black;
+
+    &:before {
+        background: $color-blue;
+        content: '';
+        position: absolute;
+        top:0;
+        left: 2px;
+        border-radius:5px 5px 4px 5px;
+        right:0;
+        bottom: 4px;
+        z-index: -1;
+    }
+    &:after {
+        background: $color-light;
+        position: absolute;
+        content: '';
+        right:0;
+        top:0;
+        left: 0;
+        border-bottom: 2px solid $color-black;
+        height: 2em;
+        border-radius: 5px 5px 0 0;
+    }
 }
 
 h1 { font-size: 2.6em }
