@@ -1,6 +1,8 @@
 #!/bin/sh
 
 rm -fr var/
+rm -fr node_modules/
 mkdir var/
 cd var/ && virtualenv --python=python3.6 venv/
 cd .. && var/venv/bin/pip install -r etc/requirements.txt
+npm install

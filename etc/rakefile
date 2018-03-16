@@ -20,6 +20,7 @@ end
 task :assets do
   newdir "dist/"
   sh "cp assets/cassette.svg dist/cassette.svg"
+  sh "cp assets/hole.svg dist/hole.svg"
 end
 task :sass do
   newdir "dist/css"

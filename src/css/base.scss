@@ -15,7 +15,6 @@ $color-off:#FAFAF5;
     background-size: 100% 20px;
     position: relative;
     border: 1px solid #FFF;
-
 }
 
 body {
@@ -158,20 +157,22 @@ h1, h2, h3 {
         padding: 0.5em 0.5em 0.5em 2.4em;
         box-sizing: border-box;
         width: 200px;
-        mask-image: url(#mask1);
+        clip-path: url(#hole);
+        -webkit-clip-path: url(#hole);
+        // -webkit-mask-image: url(../hole.svg#mask1);
 
 
-        &::before {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            left: 10px;
-            top: 10px;
-            border-radius: 50%;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.47);
-            background: $color-brown;
-        }
+        // &::before {
+        //     content: '';
+        //     position: absolute;
+        //     width: 20px;
+        //     height: 20px;
+        //     left: 10px;
+        //     top: 10px;
+        //     border-radius: 50%;
+        //     box-shadow: inset 0 0 10px rgba(0,0,0,0.47);
+        //     background: $color-brown;
+        // }
     }
 
     figure {
