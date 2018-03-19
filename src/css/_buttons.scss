@@ -4,24 +4,7 @@
 @import "components/shadows";
 @import "components/buttons";
 @import "components/navbar";
-@import "components/animations";
 
-.view-container {
-    position: absolute;
-    width: 100%;
-    overflow: hidden;
-}
-.view {
-    .cube {
-        width: 800px;
-        height: 700px;
-        background: #EEE;
-    }
-
-}
-#main{
-    width: 100%;
-}
 body {
     margin: 0;
     font-family: 'Lato', sans-serif;
@@ -31,9 +14,6 @@ body {
 
     display:flex;
 
-    .view {
-        padding: 84px 120px;
-    }
 
     main {
         margin: 0.8em 1.6em;

@@ -1,0 +1,70 @@
+@import "../variables";
+
+.btn {
+    position: relative;
+    padding: 0.2em 0em;
+    margin: 0 0.2em;
+    text-align: center;
+    text-decoration: none;
+    border: 2px solid;
+    background: $color-back;
+    border-radius: 12px;
+    width: 50px;
+    box-sizing: border-box;
+
+    & > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    svg {
+        width: 40px;
+    }
+
+    span {
+        font-family: 'Permanent Marker', cursive;
+        display: block;
+        font-size: 0.8em;
+        margin-top: -0.5em;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        border-radius: 10px;
+        z-index: 0;
+        left: 1px;
+        top: 1px;
+        bottom: 1px;
+        right: 1px;
+    }
+
+    &.brown {
+        color: $color-brown;
+        border-color: $color-brown;
+        &:hover, &.active {
+            &::after {
+                background: $color-brown !important;
+            }
+        }
+        svg { fill: $color-brown; }
+    }
+
+    &.red {
+        color: $color-contrast;
+        border-color: $color-contrast;
+        &:hover, &.active {
+            &::after {
+                background: $color-contrast !important;
+            }
+        }
+        svg { fill: $color-contrast; }
+    }
+
+    &:hover, &.active {
+        color: $color-back;
+        svg {
+            fill: $color-back;
+        }
+    }
+}

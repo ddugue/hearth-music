@@ -6,4 +6,4 @@ export FLASK_DEBUG=1
 
 set -e
 rake -f etc/rakefile
-cd src && ../var/venv/bin/flask run
+cd srv && ../var/venv/bin/flask run

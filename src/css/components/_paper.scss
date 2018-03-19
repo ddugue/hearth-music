@@ -1,0 +1,57 @@
+@import "shadows";
+@import "../utils";
+
+%paper-stripe {
+    @extend %shadow-1;
+
+    opacity: 0.975;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#cacaca), color-stop(4%, #fff)) 0 4px;
+    background-size: 100% 20px;
+    position: relative;
+    border: 1px solid #FFF;
+    padding-left: 3.2em !important;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 4px;
+        top: 0;
+        left: 35px;
+        bottom: 0;
+        border: 1px solid;
+        border-color: transparent #efe4e4;
+    }
+}
+
+@mixin hole($radius, $x, $y) {
+    clip-path: polygon(0% 0%, 0% 100%, $x 100%,
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       xPoint($x, $radius, 240deg) yPoint($y, $radius, 240deg),
+                       xPoint($x, $radius, 210deg) yPoint($y, $radius, 210deg),
+                       xPoint($x, $radius, 180deg) yPoint($y, $radius, 180deg),
+                       xPoint($x, $radius, 150deg) yPoint($y, $radius, 150deg),
+                       xPoint($x, $radius, 120deg) yPoint($y, $radius, 120deg),
+                       xPoint($x, $radius, 90deg) yPoint($y, $radius, 90deg),
+                       xPoint($x, $radius, 60deg) yPoint($y, $radius, 60deg),
+                       xPoint($x, $radius, 30deg) yPoint($y, $radius, 30deg),
+                       xPoint($x, $radius, 0deg) yPoint($y, $radius, 0deg),
+                       xPoint($x, $radius, 330deg) yPoint($y, $radius, 330deg),
+                       xPoint($x, $radius, 300deg) yPoint($y, $radius, 300deg),
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       $x 100%, 100% 100%, 100% 0%);
+    -webkit-clip-path: polygon(0% 0%, 0% 100%, $x 100%,
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       xPoint($x, $radius, 240deg) yPoint($y, $radius, 240deg),
+                       xPoint($x, $radius, 210deg) yPoint($y, $radius, 210deg),
+                       xPoint($x, $radius, 180deg) yPoint($y, $radius, 180deg),
+                       xPoint($x, $radius, 150deg) yPoint($y, $radius, 150deg),
+                       xPoint($x, $radius, 120deg) yPoint($y, $radius, 120deg),
+                       xPoint($x, $radius, 90deg) yPoint($y, $radius, 90deg),
+                       xPoint($x, $radius, 60deg) yPoint($y, $radius, 60deg),
+                       xPoint($x, $radius, 30deg) yPoint($y, $radius, 30deg),
+                       xPoint($x, $radius, 0deg) yPoint($y, $radius, 0deg),
+                       xPoint($x, $radius, 330deg) yPoint($y, $radius, 330deg),
+                       xPoint($x, $radius, 300deg) yPoint($y, $radius, 300deg),
+                       xPoint($x, $radius, 270deg) yPoint($y, $radius, 270deg),
+                       $x 100%, 100% 100%, 100% 0%);
+}

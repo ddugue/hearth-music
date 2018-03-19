@@ -5,6 +5,14 @@ import { Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import { ConnectedRouter } from 'react-router-redux';
+import Application from './components/Application';
+import HomeView from './views/Home';
+import AlbumsView from './views/Albums';
+import ArtistsView from './views/Artists';
+import SongsView from './views/Songs';
+import SearchView from './views/Search';
+import Navbar from './components/Navbar';
+import View from './components/View';
 
 
 /* import runSaga from './sagas';*/
@@ -22,7 +30,14 @@ import { store, sagaMiddleware, history } from './store';
 render((
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <h1> Hello React World </h1>
+      <Application>
+        <Navbar />
+        <View exact path="/" component={HomeView} />
+        <View exact path="/albums" component={AlbumsView} />
+        <View exact path="/songs" component={SongsView} />
+        <View exact path="/artists" component={ArtistsView} />
+        <View exact path="/search" component={SearchView} />
+      </Application>
       {/* <ApplicationWrapper>
           <VersionChecker />
           <PrivateRoute exact path="/" component={HomeView} />
