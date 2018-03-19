@@ -5,6 +5,9 @@ svgIcons.cassette = require('../img/cassette.svg');
 svgIcons.rockon = require('../img/rockon.svg');
 svgIcons.vinyl = require('../img/vinyl.svg');
 svgIcons.musicNote = require('../img/music_note.svg');
+svgIcons.funk = require('../img/funk.svg');
+svgIcons.queue = require('../img/queue.svg');
+svgIcons.playlist = require('../img/playlist.svg');
 
 const Icon = ({ name, ...rest }) => (
   <div className="svg-icon" {...rest} dangerouslySetInnerHTML={{ __html: svgIcons[name] }} />

@@ -18,7 +18,7 @@
     }
 
     svg {
-        width: 40px;
+        max-height: 30px;
     }
 
     span {
@@ -59,6 +59,50 @@
             }
         }
         svg { fill: $color-contrast; }
+    }
+
+    &.salmon {
+        color: $color-salmon;
+        border-color: $color-salmon;
+        &:hover, &.active {
+            &::after {
+                background: $color-salmon !important;
+            }
+        }
+        svg { fill: $color-salmon; }
+    }
+
+    &.dark-red {
+        color: $color-dark-red;
+        border-color: $color-dark-red;
+        &:hover, &.active {
+            &::after {
+                background: $color-dark-red !important;
+            }
+        }
+        svg { fill: $color-dark-red; }
+    }
+
+    &.orange {
+        color: $color-orange;
+        border-color: $color-orange;
+        &:hover, &.active {
+            &::after {
+                background: $color-orange !important;
+            }
+        }
+        svg { fill: $color-orange; }
+    }
+
+    &.grey {
+        color: $color-grey;
+        border-color: $color-grey;
+        &:hover, &.active {
+            &::after {
+                background: $color-grey !important;
+            }
+        }
+        svg { fill: $color-grey; }
     }
 
     &:hover, &.active {
