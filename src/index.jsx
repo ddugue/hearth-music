@@ -11,6 +11,7 @@ import AlbumsView from './views/Albums';
 import ArtistsView from './views/Artists';
 import SongsView from './views/Songs';
 import SearchView from './views/Search';
+import PlayerView from './views/Player';
 import Navbar from './components/Navbar';
 import View from './components/View';
 
@@ -37,6 +38,7 @@ render((
         <View exact path="/songs" component={SongsView} />
         <View exact path="/artists" component={ArtistsView} />
         <View exact path="/search" component={SearchView} />
+        <PlayerView />
       </Application>
       {/* <ApplicationWrapper>
           <VersionChecker />

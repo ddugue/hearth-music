@@ -5,6 +5,7 @@
 @import "components/buttons";
 @import "components/navbar";
 @import "components/animations";
+@import "components/player";
 
 .view-container {
     position: absolute;
@@ -155,48 +156,6 @@ header {
     flex-direction: column-reverse;
 }
 
-$color-blue: #48788f;
-$color-light-blue: #84bcd0;
-$color-light: #dbd7db;
-$color-black: #1f1d1d;
-footer {
-    @extend %shadow-3;
-    background: $color-light-blue;
-    color: $color-light;
-    font-weight: bold;
-    text-shadow: 1px 1px transparentize($color-black, 0.7);
-    padding: 2.5em 1em 1em 1em;
-    position: fixed;
-    bottom: 1em;
-    right: 1em;
-    left: 90px;
-    height: 75px;
-    border-radius: 5px;
-    border: 2px solid $color-black;
-
-    &:before {
-        background: $color-blue;
-        content: '';
-        position: absolute;
-        top:0;
-        left: 2px;
-        border-radius:5px 5px 4px 5px;
-        right:0;
-        bottom: 4px;
-        z-index: -1;
-    }
-    &:after {
-        background: $color-light;
-        position: absolute;
-        content: '';
-        right:0;
-        top:0;
-        left: 0;
-        border-bottom: 2px solid $color-black;
-        height: 2em;
-        border-radius: 5px 5px 0 0;
-    }
-}
 
 h1 { font-size: 2.6em }
 h2 { font-size: 2em }

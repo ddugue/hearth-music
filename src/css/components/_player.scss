@@ -1,0 +1,76 @@
+@import "shadows";
+
+$color-blue: #48788f;
+$color-light-blue: #84bcd0;
+$color-light: #dbd7db;
+$color-black: #1f1d1d;
+
+.music-player {
+    @extend %shadow-3;
+    background: $color-light-blue;
+    color: $color-light;
+    font-weight: bold;
+    text-shadow: 1px 1px transparentize($color-black, 0.7);
+    padding: 2.5em 1em 1em 1em;
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    height: 90px;
+    width: 400px;
+    border-radius: 5px;
+    border: 2px solid $color-black;
+
+    &:before {
+        background: $color-blue;
+        content: '';
+        position: absolute;
+        top:0;
+        left: 2px;
+        border-radius:5px 5px 4px 5px;
+        right:0;
+        bottom: 4px;
+        z-index: -1;
+    }
+
+    &:after {
+        background: $color-light;
+        position: absolute;
+        content: '';
+        right:0;
+        top:0;
+        left: 0;
+        border-bottom: 2px solid $color-black;
+        height: 2em;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .cassette {
+        border-radius: 7px;
+        border: 2px solid $color-black;
+        left:125px;
+        right:120px;
+        height: 50px;
+        top: 65px;
+        position:absolute;
+        overflow:hidden;
+        background: #f7f5e6;
+        box-shadow: inset 2px 2px 1px 1px rgba(43, 69, 82, 0.56);
+
+        h2 {
+            position:relative;
+            left: -5px;
+            color: $color-black;
+            top: -1px;
+            font-size: 0.9em;
+        }
+        .inner {
+            background: #504a4d;
+            border: 1px solid $color-black;
+            left: 3px;
+            right: 3px;
+            top: 15px;
+            bottom: 3px;
+            position:absolute;
+        }
+    }
+}
