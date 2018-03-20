@@ -28,6 +28,7 @@ class Player extends React.Component {
        * currentTime: 0,*/
       trackPosition: 0,
       position: 0,
+      volume: 1.0,
     };
   }
 
@@ -105,7 +106,10 @@ class Player extends React.Component {
         <input type="range" min="0" max="100" disabled={!this.state.position}
                value={this.state.position} onChange={this.seek} className="seek-bar"
         />
-        {this.props.track && <Audio onPlaying={(position) => this.setState({ position })} src={this.props.track} playing={!this.state.paused} position={parseInt(this.state.trackPosition, 10)} />}
+        <input type="range" min="0" max="1" step="0.01"
+               value={this.state.volume} onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
+        />
+        {this.props.track && <Audio fade={3} onPlaying={(position) => this.setState({ position })} src={this.props.track} playing={!this.state.paused} position={parseInt(this.state.trackPosition, 10)} volume={this.state.volume} />}
 
           <div className="cassette">
             <h2>Title of the long song</h2>
