@@ -1,13 +1,20 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-export default class Player extends React.Component {
+import { nextTrack, previousTrack } from '../actions/nowPlaying';
+import { getCurrentTrack, getHasNext, getHasPrevious } from '../selectors/nowPlaying';
+
+class Player extends React.Component {
 
   static propTypes = {
     onNext: React.PropTypes.func.isRequired,
     onPrevious: React.PropTypes.func.isRequired,
-    getTrack: React.PropTypes.func.isRequired,
-    track: React.PropTypes.bool.isRequired,
-    nextTrack: React.PropTypes.string,
+    hasPrevious: React.PropTypes.bool.isRequired,
+    hasNext: React.PropTypes.bool.isRequired,
+    /* getTrack: React.PropTypes.func.isRequired,*/
+    track: React.PropTypes.string.isRequired,
+    /* nextTrack: React.PropTypes.string,*/
   }
 
   constructor(props) {
@@ -18,8 +25,14 @@ export default class Player extends React.Component {
     };
   }
 
+  componentDidMount() {
+    if (this.props.track) {
+      this.play(this.props.track);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps.track !== this.state.playingTrack) {
+    if (nextProps.track && nextProps.track !== this.state.playingTrack) {
       this.play(nextProps.track);
     }
   }
@@ -36,6 +49,9 @@ export default class Player extends React.Component {
     if (this.audio) {
       this.audio.play();
     }
+  }
+
+  seek = () => {
   }
 
   play = (track) => {
@@ -55,9 +71,9 @@ export default class Player extends React.Component {
     const toggle = this.state.paused ? this.resume : this.pause;
     return (
       <div className="music-player">
-        <button onClick={this.props.onPrevious}>Previous</button>
+        <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button>
         <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
-        <button onClick={this.props.onNext}>Next</button>
+        <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
 
         <div className="cassette">
           <h2>Title of the long song</h2>
@@ -68,3 +84,19 @@ export default class Player extends React.Component {
     );
   }
 }
+
+export default connect(
+  (state) => {
+    return {
+      track: getCurrentTrack(state),
+      hasPrevious: getHasPrevious(state),
+      hasNext: getHasNext(state),
+    };
+  },
+  (dispatch, props) => {
+    return bindActionCreators({
+      onNext: nextTrack,
+      onPrevious: previousTrack,
+    }, dispatch);
+  },
+)(Player);
