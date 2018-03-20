@@ -4,6 +4,7 @@ $color-blue: #48788f;
 $color-light-blue: #84bcd0;
 $color-light: #dbd7db;
 $color-black: #1f1d1d;
+$color-offwhite: #f7f5e6;
 
 .music-player {
     @extend %shadow-3;
@@ -15,10 +16,11 @@ $color-black: #1f1d1d;
     position: fixed;
     bottom: 1em;
     right: 1em;
-    height: 90px;
-    width: 400px;
+    height: 170px;
+    width: 360px;
     border-radius: 5px;
     border: 2px solid $color-black;
+    box-sizing: border-box;
 
     &:before {
         background: $color-blue;
@@ -40,37 +42,95 @@ $color-black: #1f1d1d;
         top:0;
         left: 0;
         border-bottom: 2px solid $color-black;
-        height: 2em;
+        height: 20%;
         border-radius: 5px 5px 0 0;
     }
 
+    .line {
+        top: 0%;
+        left: 17%;
+        position:absolute;
+        border: 1px solid $color-black;
+        height: 100%
+    }
     .cassette {
         border-radius: 7px;
         border: 2px solid $color-black;
-        left:125px;
-        right:120px;
-        height: 50px;
-        top: 65px;
+        right: 18%;
+        width: 45%;
+        height: 31%;
+        bottom: 17%;
         position:absolute;
         overflow:hidden;
-        background: #f7f5e6;
+        background: linear-gradient(to top,
+                                    $color-contrast 10%,
+                                    $color-contrast 10%,
+                                    $color-back 10%,
+                                    $color-back 13%,
+                                    $color-contrast 13%,
+                                    $color-contrast 20%,
+                                    $color-back 20%,
+                                    $color-back 24%,
+                                    $color-contrast 24%,
+                                    $color-contrast 30%,
+                                    $color-back 30%,
+                                    $color-back 33%,
+                                    $color-contrast 33%,
+                                    $color-contrast 38%,
+                                    $color-back 38%,
+                                    $color-back 41%,
+                                    $color-contrast 41%,
+                                    $color-contrast 46%,
+                                    $color-back 46%,
+                                    $color-back 51%,
+                                    $color-contrast 51%,
+                                    $color-contrast 53%,
+                                    $color-back 53%,
+                                    $color-back 58%,
+                                    $color-contrast 58%,
+                                    $color-contrast 60%,
+                                    $color-back 60%,
+                                    $color-back 68%,
+                                    $color-back 100%);
+
         box-shadow: inset 2px 2px 1px 1px rgba(43, 69, 82, 0.56);
 
         h2 {
             position:relative;
             left: -5px;
-            color: $color-black;
+            color: $color-brown;
             top: -1px;
             font-size: 0.9em;
         }
         .inner {
             background: #504a4d;
             border: 1px solid $color-black;
-            left: 3px;
-            right: 3px;
-            top: 15px;
-            bottom: 3px;
+            left: 4%;
+            right: 4%;
+            bottom: 12%;
+            height: 55%;
             position:absolute;
+            overflow: hidden;
+            box-shadow: inset 2px 2px 1px 1px rgba(72, 72, 72, 0.56);
+
+            .wheel {
+                position: absolute;
+                border-color:#3e393F;
+                background: #9e9e9e;
+                border-style: solid;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                top:-15px;
+
+                &:first-child {
+                    left: -5px;
+                }
+                &:last-child {
+                    right: -5px;
+                }
+            }
+
         }
     }
 }
