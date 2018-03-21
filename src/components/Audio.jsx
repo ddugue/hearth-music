@@ -9,6 +9,7 @@ export default class Audio extends React.Component {
     volume: React.PropTypes.number,
     fade: React.PropTypes.number,
     onPlaying: React.PropTypes.func,
+    onEnded: React.PropTypes.func,
   }
 
   static defaultProps = {
@@ -17,6 +18,7 @@ export default class Audio extends React.Component {
     fade: 0,
     volume: 1.0,
     onPlaying: null,
+    onEnded: null,
   }
 
   constructor(props) {
@@ -60,14 +62,14 @@ export default class Audio extends React.Component {
       const percent = ((this.audio.currentTime / this.audio.duration) * 100);
 
       if (this.previousPercent !== percent) {
-        this.props.onPlaying(percent);
+        this.props.onPlaying(percent, this.audio.currentTime, this.audio.duration);
       }
 
       this.previousPercent = this.percent;
       const delta = this.audio.duration - this.audio.currentTime;
       console.log(delta);
-      if (delta < this.props.fading) {
-        this.crossfade(1 - (delta / this.props.fading));
+      if (delta < this.props.fade) {
+        this.crossfade(1 - (delta / this.props.fade));
       }
     }
   }

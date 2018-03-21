@@ -22,40 +22,20 @@ class Player extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      /* playingTrack: null, // Currently playing song*/
       paused: false,
-      /* duration: null,
-       * currentTime: 0,*/
       trackPosition: 0,
       position: 0,
       volume: 1.0,
+      audio: 0, // Currently playing audio
     };
-  }
-
-  componentDidMount() {
-    /* if (this.props.track) {
-     *   this.play(this.props.track);
-     * }*/
-  }
-
-  componentWillReceiveProps(nextProps) {
-    /* if (nextProps.track && nextProps.track !== this.state.playingTrack) {
-     *   this.play(nextProps.track);
-     * }*/
   }
 
   pause = () => {
     this.setState({ paused: true });
-    /* if (this.audio) {
-     *   this.audio.pause();
-     * }*/
   }
 
   resume = () => {
     this.setState({ paused: false });
-    /* if (this.audio) {
-     *   this.audio.play();
-     * }*/
   }
 
   seek = (event) => {
@@ -63,37 +43,34 @@ class Player extends React.Component {
       position: event.target.value,
       trackPosition: event.target.value,
     });
-    /* if (this.audio) {
-     *   this.audio.currentTime = (position.target.value / 100) * this.audio.duration;
-     * }*/
   }
 
-  play = (track) => {
-    if (this.audio) {
-      this.audio.pause();
-      this.audio.remove();
+  renderAudio0({ audio, paused, trackPosition, volume }, { track, nextTrack }) => {
+    if (audio == 0) {
+      return (
+        <Audio
+          key={"00"}
+          fade={3}
+            onPlaying={(position, time, duration) => this.setState({ position })}
+          onEnd={() => this.setState({'audio':1})}
+          src={this.props.track}
+          playing={!this.state.paused}
+          position={parseInt(this.state.trackPosition, 10)}
+          volume={volume}
+        />
+      );
     }
-    this.audio = new Audio();
-    this.audio.src = track;
-    this.audio.hidden = 'hidden';
-    this.audio.autoplay = 'true';
-
-    document.body.appendChild(this.audio);
-    this.setState({ playingTrack: track, paused: false, duration: null });
-
-    this.audio.onloadedmetadata = () => {
-      this.setState({ duration: this.audio.duration });
-    };
-
-    clearInterval(this.interval);
-    this.interval = setInterval(() => {
-      console.log(this.audio.currentTime);
-      this.setState({ currentTime: this.audio.currentTime });
-    }, 1000);
-
-    this.audio.onloadedmetadata = () => {
-      this.setState({ duration: this.audio.duration });
-    };
+    return (
+      <Audio
+        key={"00"}
+        fade={3}
+        onPlaying={(position, time, duration) => this.setState({ position })}
+        src={this.props.track}
+        playing={!this.state.paused}
+        position={parseInt(this.state.trackPosition, 10)}
+        volume={volume}
+      />
+    );
   }
 
   render() {
@@ -101,23 +78,23 @@ class Player extends React.Component {
     return (
       <div className="music-player">
         <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button>
-        <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
-        <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
-        <input type="range" min="0" max="100" disabled={!this.state.position}
-               value={this.state.position} onChange={this.seek} className="seek-bar"
-        />
-        <input type="range" min="0" max="1" step="0.01"
-               value={this.state.volume} onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
-        />
-        {this.props.track && <Audio fade={3} onPlaying={(position) => this.setState({ position })} src={this.props.track} playing={!this.state.paused} position={parseInt(this.state.trackPosition, 10)} volume={this.state.volume} />}
+    <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
+    <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
+    <input type="range" min="0" max="100" disabled={!this.state.position}
+           value={this.state.position} onChange={this.seek} className="seek-bar"
+    />
+    <input type="range" min="0" max="1" step="0.01"
+           value={this.state.volume} onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
+    />
+    {this.props.track && }
 
-          <div className="cassette">
-            <h2>Title of the long song</h2>
-            <div className="inner">
-            </div>
-          </div>
+    <div className="cassette">
+      <h2>Title of the long song</h2>
+      <div className="inner">
       </div>
-    );
+    </div>
+  </div>
+                                                                                                                                                                                                                                        );
   }
 }
 
