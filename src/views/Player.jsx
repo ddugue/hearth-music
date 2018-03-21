@@ -51,7 +51,7 @@ class Player extends React.Component {
         <Audio
           key={"00"}
           fade={3}
-            onPlaying={(position, time, duration) => this.setState({ position })}
+          onPlaying={(position, time, duration) => this.setState({ position })}
           onEnd={() => this.setState({'audio':1})}
           src={this.props.track}
           playing={!this.state.paused}
