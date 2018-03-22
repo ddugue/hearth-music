@@ -77,6 +77,10 @@ class Player extends React.Component {
     const toggle = this.state.paused ? this.resume : this.pause;
     return (
       <div className="music-player">
+
+        <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button>
+        <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
+        <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
         <div className="line" />
         <div className="cassette">
           <h2>Title of the long song</h2>
@@ -85,19 +89,15 @@ class Player extends React.Component {
             <div className="wheel" style={{borderWidth: 10}}/>
           </div>
         </div>
-        <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button>
-    <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
-    <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
-    <input type="range" min="0" max="100" disabled={!this.state.position}
-           value={this.state.position} onChange={this.seek} className="seek-bar"
-    />
-    <input type="range" min="0" max="1" step="0.01"
-           value={this.state.volume} onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
-    />
-    {this.props.track && }
+        <input type="range" min="0" max="100" disabled={!this.state.position}
+               value={this.state.position} onChange={this.seek} className="seek-bar"
+        />
+        <input type="range" min="0" max="1" step="0.01"
+               value={this.state.volume} onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
+        />
 
   </div>
-                                                                                                                                                                                                                                        );
+    );
   }
 }
 
