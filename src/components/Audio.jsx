@@ -74,6 +74,11 @@ export default class Audio extends React.Component {
     }
   }
 
+  handleOnEnded = () => {
+    clearInterval(this.interval);
+    this.props.onEnded();
+  }
+
   handleOnLoadedMetadata = () => {
     clearInterval(this.interval);
     this.interval = setInterval(this.handleOnPlaying, 100);
@@ -120,6 +125,7 @@ export default class Audio extends React.Component {
     this.audio = audio;
     /* this.audio.crossOrigin = "anonymous";*/
     this.audio.onloadedmetadata = this.handleOnLoadedMetadata;
+    this.audio.onended = this.handleOnEnded;
     this.audio.oncanplay = this.handleOnCanPlay;
     /* this.source = context.createMediaElementSource(audio);
      * this.gain = context.createGain();
