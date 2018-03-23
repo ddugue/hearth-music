@@ -3,7 +3,7 @@ import React from 'react';
 const context = new AudioContext();
 export default class Audio extends React.Component {
   static propTypes = {
-    src: React.PropTypes.string.isRequired,
+    src: React.PropTypes.string,
     playing: React.PropTypes.bool,
     position: React.PropTypes.number,
     volume: React.PropTypes.number,
@@ -26,6 +26,7 @@ export default class Audio extends React.Component {
     this.state = {
       duration: null,
       currentTime: 0,
+      src: props.src,
     };
   }
 
@@ -42,23 +43,33 @@ export default class Audio extends React.Component {
     }
 
     if (!this.props.playing && nextProps.playing) {
+      console.log('Playing resumed', this.state.src);
       this.resume();
     }
 
     if (this.props.playing && !nextProps.playing) {
+      console.log('Playing paused', this.state.src);
       this.pause();
     }
 
     if (nextProps.src && nextProps.src !== this.props.src) {
-
+      if (nextProps.src === this.state.src) {
+        clearTimeout(this.timeout);
+      } else {
+        this.timeout = setTimeout(() => this.setState({ src: nextProps.src }), 100);
+      }
     }
+
     if (nextProps.volume !== this.props.volume) {
       this.setVolume(nextProps.volume);
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
+    console.log('Component will unmount', this.state.src);
+    this.pause();
     clearInterval(this.interval);
+    clearTimeout(this.timeout);
   }
 
   handleOnPlaying = () => {
@@ -139,8 +150,6 @@ export default class Audio extends React.Component {
   }
 
   render() {
-    return (
-      <audio hidden="hidden" src={this.props.src} ref={this.bindAudio} />
-    );
+    return this.state.src ? (<audio hidden="hidden" src={this.state.src} ref={this.bindAudio} />) : null;
   }
 }

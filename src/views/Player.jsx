@@ -8,13 +8,12 @@ import { getCurrentTrack, getNextTrack, getHasNext, getHasPrevious } from '../se
 import Audio from '../components/Audio';
 
 class Player extends React.Component {
-
   static propTypes = {
     onNext: React.PropTypes.func.isRequired,
     onPrevious: React.PropTypes.func.isRequired,
     hasPrevious: React.PropTypes.bool.isRequired,
     hasNext: React.PropTypes.bool.isRequired,
-    /* getTrack: React.PropTypes.func.isRequired,*/
+    /* getTrack: React.PropTypes.func.isRequired, */
     track: React.PropTypes.string.isRequired,
     nextTrack: React.PropTypes.string,
   }
@@ -57,57 +56,69 @@ class Player extends React.Component {
         <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
         <div className="line" />
         <div className="cassette">
-          <h2>Title of the long song</h2>
+          <h2>{this.props.track}</h2>
           <div className="inner">
-            <div className="wheel" style={{borderWidth: 50}} />
-            <div className="wheel" style={{borderWidth: 10}}/>
+            <div className="wheel" style={{ borderWidth: 50 }} />
+            <div className="wheel" style={{ borderWidth: 10 }} />
           </div>
         </div>
-        <input type="range" min="0" max="100" disabled={!this.state.position}
-               value={this.state.position} onChange={this.seek} className="seek-bar"
+        <input
+          type="range"
+          min="0"
+          max="100"
+          disabled={!this.state.position}
+          value={this.state.position}
+          onChange={this.seek}
+          className="seek-bar"
         />
-        <input type="range" min="0" max="1" step="0.01"
-               value={this.state.volume} onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={this.state.volume}
+          onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
         />
 
-      <Audio
-        key={this.state.index}
-        fade={15}
-        onPlaying={(position, time, duration) => this.setState({ position, time, duration })}
-        onEnded={() => {
+        <Audio
+          key={this.state.index}
+          fade={15}
+          onPlaying={(position, time, duration) => this.setState({ position, time, duration })}
+          onEnded={() => {
             if (!this.props.hasNext) return;
-            this.setState({ index: this.state.index + 1 });
-            this.props.onNext();
-        }}
-        src={this.props.track}
-        playing={!this.state.paused}
-        position={parseInt(this.state.trackPosition, 10)}
-        volume={this.state.volume}
-      />
-      {this.props.nextTrack ? <Audio
-        src={this.props.nextTrack}
-        key={this.state.index+1}
-        playing={fading}
-        volume={this.state.volume}
-      /> : null}
-  </div>
+            this.props.onNext(); // Order is VERY important, call setState after onNext
+            this.setState({
+              index: this.state.index + 1,
+              time: 0,
+              position: 0,
+              trackPosition: 0,
+            });
+          }}
+          src={this.props.track}
+          playing={!this.state.paused}
+          position={parseInt(this.state.trackPosition, 10)}
+          volume={this.state.volume}
+        />
+        <Audio
+          src={this.props.nextTrack}
+          key={this.state.index + 1}
+          playing={!this.state.paused && fading}
+          volume={this.state.volume}
+        />
+      </div>
     );
   }
 }
 
 export default connect(
-  (state) => {
-    return {
-      track: getCurrentTrack(state),
-      nextTrack: getNextTrack(state),
-      hasPrevious: getHasPrevious(state),
-      hasNext: getHasNext(state),
-    };
-  },
-  (dispatch, props) => {
-    return bindActionCreators({
-      onNext: nextTrack,
-      onPrevious: previousTrack,
-    }, dispatch);
-  },
+  state => ({
+    track: getCurrentTrack(state),
+    nextTrack: getNextTrack(state),
+    hasPrevious: getHasPrevious(state),
+    hasNext: getHasNext(state),
+  }),
+  (dispatch, props) => bindActionCreators({
+    onNext: nextTrack,
+    onPrevious: previousTrack,
+  }, dispatch),
 )(Player);
