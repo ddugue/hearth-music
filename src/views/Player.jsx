@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { nextTrack, previousTrack } from '../actions/nowPlaying';
-import { getCurrentTrack, getHasNext, getHasPrevious } from '../selectors/nowPlaying';
+import { getCurrentTrack, getNextTrack, getHasNext, getHasPrevious } from '../selectors/nowPlaying';
 
 import Audio from '../components/Audio';
 
@@ -16,7 +16,7 @@ class Player extends React.Component {
     hasNext: React.PropTypes.bool.isRequired,
     /* getTrack: React.PropTypes.func.isRequired,*/
     track: React.PropTypes.string.isRequired,
-    /* nextTrack: React.PropTypes.string,*/
+    nextTrack: React.PropTypes.string,
   }
 
   constructor(props) {
@@ -27,6 +27,7 @@ class Player extends React.Component {
       position: 0,
       volume: 1.0,
       audio: 0, // Currently playing audio
+      index: 0,
     };
   }
 
@@ -45,36 +46,9 @@ class Player extends React.Component {
     });
   }
 
-  renderAudio0({ audio, paused, trackPosition, volume }, { track, nextTrack }) => {
-    if (audio == 0) {
-      return (
-        <Audio
-          key={"00"}
-          fade={3}
-          onPlaying={(position, time, duration) => this.setState({ position })}
-          onEnd={() => this.setState({'audio':1})}
-          src={this.props.track}
-          playing={!this.state.paused}
-          position={parseInt(this.state.trackPosition, 10)}
-          volume={volume}
-        />
-      );
-    }
-    return (
-      <Audio
-        key={"00"}
-        fade={3}
-        onPlaying={(position, time, duration) => this.setState({ position })}
-        src={this.props.track}
-        playing={!this.state.paused}
-        position={parseInt(this.state.trackPosition, 10)}
-        volume={volume}
-      />
-    );
-  }
-
   render() {
     const toggle = this.state.paused ? this.resume : this.pause;
+    const fading = this.state.duration - this.state.time <= 15;
     return (
       <div className="music-player">
 
@@ -96,6 +70,26 @@ class Player extends React.Component {
                value={this.state.volume} onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
         />
 
+      <Audio
+        key={this.state.index}
+        fade={15}
+        onPlaying={(position, time, duration) => this.setState({ position, time, duration })}
+        onEnded={() => {
+            if (!this.props.hasNext) return;
+            this.setState({ index: this.state.index + 1 });
+            this.props.onNext();
+        }}
+        src={this.props.track}
+        playing={!this.state.paused}
+        position={parseInt(this.state.trackPosition, 10)}
+        volume={this.state.volume}
+      />
+      {this.props.nextTrack ? <Audio
+        src={this.props.nextTrack}
+        key={this.state.index+1}
+        playing={fading}
+        volume={this.state.volume}
+      /> : null}
   </div>
     );
   }
@@ -105,6 +99,7 @@ export default connect(
   (state) => {
     return {
       track: getCurrentTrack(state),
+      nextTrack: getNextTrack(state),
       hasPrevious: getHasPrevious(state),
       hasNext: getHasNext(state),
     };

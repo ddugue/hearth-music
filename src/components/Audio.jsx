@@ -57,6 +57,10 @@ export default class Audio extends React.Component {
     }
   }
 
+  componentWillUnmount(){
+    clearInterval(this.interval);
+  }
+
   handleOnPlaying = () => {
     if (this.props.playing && this.props.onPlaying && this.audio && this.audio.duration) {
       const percent = ((this.audio.currentTime / this.audio.duration) * 100);
@@ -66,11 +70,10 @@ export default class Audio extends React.Component {
       }
 
       this.previousPercent = this.percent;
-      const delta = this.audio.duration - this.audio.currentTime;
-      console.log(delta);
-      if (delta < this.props.fade) {
-        this.crossfade(1 - (delta / this.props.fade));
-      }
+      /* const delta = this.audio.duration - this.audio.currentTime;
+       * if (delta < this.props.fade) {
+       *   this.crossfade(1 - (delta / this.props.fade));
+       * }*/
     }
   }
 
@@ -122,11 +125,13 @@ export default class Audio extends React.Component {
   }
 
   bindAudio = (audio) => {
-    this.audio = audio;
-    /* this.audio.crossOrigin = "anonymous";*/
-    this.audio.onloadedmetadata = this.handleOnLoadedMetadata;
-    this.audio.onended = this.handleOnEnded;
-    this.audio.oncanplay = this.handleOnCanPlay;
+    if (audio) {
+      this.audio = audio;
+      /* this.audio.crossOrigin = "anonymous";*/
+      this.audio.onloadedmetadata = this.handleOnLoadedMetadata;
+      this.audio.onended = this.handleOnEnded;
+      this.audio.oncanplay = this.handleOnCanPlay;
+    }
     /* this.source = context.createMediaElementSource(audio);
      * this.gain = context.createGain();
      * this.source.connect(this.gain);
