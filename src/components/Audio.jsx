@@ -43,12 +43,10 @@ export default class Audio extends React.Component {
     }
 
     if (!this.props.playing && nextProps.playing) {
-      console.log('Playing resumed', this.state.src);
       this.resume();
     }
 
     if (this.props.playing && !nextProps.playing) {
-      console.log('Playing paused', this.state.src);
       this.pause();
     }
 
@@ -66,7 +64,6 @@ export default class Audio extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log('Component will unmount', this.state.src);
     this.pause();
     clearInterval(this.interval);
     clearTimeout(this.timeout);

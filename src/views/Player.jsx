@@ -51,9 +51,11 @@ class Player extends React.Component {
     return (
       <div className="music-player">
 
-        <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button>
-        <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
-        <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
+        <div className="controls">
+          <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button>
+          <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
+          <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
+        </div>
         <div className="line" />
         <div className="cassette">
           <h2>{this.props.track}</h2>
