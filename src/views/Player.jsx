@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import Icon from '../components/Icon';
 import { nextTrack, previousTrack } from '../actions/nowPlaying';
 import { getCurrentTrack, getNextTrack, getHasNext, getHasPrevious } from '../selectors/nowPlaying';
 
@@ -25,7 +26,6 @@ class Player extends React.Component {
       trackPosition: 0,
       position: 0,
       volume: 1.0,
-      audio: 0, // Currently playing audio
       index: 0,
     };
   }
@@ -50,62 +50,70 @@ class Player extends React.Component {
     const fading = this.state.duration - this.state.time <= 15;
     return (
       <div className="music-player">
-
-        <div className="controls">
-          <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button>
-          <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button>
-          <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button>
+        <div id="left">
+          <div className="row" id="controls">
+            <i className="material-icons" onClick={this.props.onPrevious}>skip_previous</i>
+            <i className="material-icons" onClick={toggle}>{this.state.paused ? 'play_arrow' : 'pause'}</i>
+            <i className="material-icons" onClick={this.props.onNext}>skip_next</i>
+          </div>
+          <div className="volume">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={this.state.volume}
+              onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
+            />
+          </div>
+          {/* <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button> */}
+          {/* <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button> */}
+          {/* <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button> */}
         </div>
-        <div className="line" />
-        <div className="cassette">
+      <div id="right">
+        <input
+            type="range"
+            min="0"
+            max="100"
+            disabled={!this.state.position}
+            value={this.state.position}
+            onChange={this.seek}
+            className="seek-bar"
+        />
+      </div>
+      {/* <div className="line" /> */}
+      <div id="cassette">
           <h2>{this.props.track}</h2>
           <div className="inner">
             <div className="wheel" style={{ borderWidth: 50 }} />
             <div className="wheel" style={{ borderWidth: 10 }} />
           </div>
         </div>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          disabled={!this.state.position}
-          value={this.state.position}
-          onChange={this.seek}
-          className="seek-bar"
-        />
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={this.state.volume}
-          onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
-        />
 
         <Audio
-          key={this.state.index}
-          fade={15}
-          onPlaying={(position, time, duration) => this.setState({ position, time, duration })}
-          onEnded={() => {
-            if (!this.props.hasNext) return;
-            this.props.onNext(); // Order is VERY important, call setState after onNext
-            this.setState({
-              index: this.state.index + 1,
-              time: 0,
-              position: 0,
-              trackPosition: 0,
-            });
-          }}
-          src={this.props.track}
-          playing={!this.state.paused}
-          position={parseInt(this.state.trackPosition, 10)}
-          volume={this.state.volume}
+            key={this.state.index}
+            fade={15}
+            onPlaying={(position, time, duration) => this.setState({ position, time, duration })}
+            onEnded={() => {
+                if (!this.props.hasNext) return;
+                this.props.onNext(); // Order is VERY important, call setState after onNext
+                this.setState({
+                  index: this.state.index + 1,
+                  time: 0,
+                  position: 0,
+                  trackPosition: 0,
+                });
+              }}
+            src={this.props.track}
+            playing={!this.state.paused}
+            position={parseInt(this.state.trackPosition, 10)}
+            volume={this.state.volume}
         />
         <Audio
-          src={this.props.nextTrack}
-          key={this.state.index + 1}
-          playing={!this.state.paused && fading}
-          volume={this.state.volume}
+            src={this.props.nextTrack}
+            key={this.state.index + 1}
+            playing={!this.state.paused && fading}
+            volume={this.state.volume}
         />
       </div>
     );
