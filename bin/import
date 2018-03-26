@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Importing the different songs
+
+var/venv/bin/beet -c etc/beets.yml -l var/beets.db import /home/ddugue/to_be_imported
+# export LC_ALL=en_US.UTF-8
+# export LANG=en_US.UTF-8
+# export FLASK_APP=music-player.py
+# cd src && ../var/venv/bin/flask scan --dry-run

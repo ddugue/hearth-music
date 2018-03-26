@@ -1,0 +1,15 @@
+directory: ~/Music
+# library: ./var/beets.db
+import:
+  group_albums: true
+
+paths:
+  default: $albumartist/$album%aunique{} ($year)/$track - $title
+
+plugins: fetchart convert
+convert:
+  auto: true
+  quiet: false
+  format: opus
+  formats:
+    opus: ffmpeg -i $source -acodec libopus -ab 128k -y -vn -vbr on -compression_level 10 $dest

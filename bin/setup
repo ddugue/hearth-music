@@ -1,4 +1,5 @@
 #!/bin/sh
+sudo pacman -Sy opus
 
 rm -fr var/
 rm -fr node_modules/
