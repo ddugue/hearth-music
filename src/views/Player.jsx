@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import Icon from '../components/Icon';
+import Wheel from '../components/Wheel';
+import IconBtn from '../components/MaterialIconBtn';
+import Volume from '../components/Volume';
 import { nextTrack, previousTrack } from '../actions/nowPlaying';
 import { getCurrentTrack, getNextTrack, getHasNext, getHasPrevious } from '../selectors/nowPlaying';
 
@@ -45,30 +48,39 @@ class Player extends React.Component {
     });
   }
 
+  handleEnd = () => {
+    // On Audio end
+    if (!this.props.hasNext) return;
+    this.props.onNext(); // Order is VERY important, call setState after onNext
+    this.setState({
+      index: this.state.index + 1,
+      time: 0,
+      position: 0,
+      trackPosition: 0,
+    });
+  }
+
+  renderControls = ({ paused }, { onPrevious, hasPrevious, onNext, hasNext }) => {
+    const toggle = paused ? this.resume : this.pause;
+    return (
+      <div className="row" id="controls">
+        <IconBtn name="skip_previous" onClick={onPrevious} disabled={!hasPrevious} />
+        <IconBtn name={paused ? 'play_arrow' : 'pause'} onClick={toggle} />
+        <IconBtn name="skip_next" onClick={onNext} />
+      </div>
+    );
+  }
+
   render() {
-    const toggle = this.state.paused ? this.resume : this.pause;
     const fading = this.state.duration - this.state.time <= 15;
+    const rightProgress = this.state.position * 33 / 100;
+    const leftProgress = 33 - rightProgress;
+
     return (
       <div className="music-player">
         <div id="left">
-          <div className="row" id="controls">
-            <i className="material-icons" onClick={this.props.onPrevious}>skip_previous</i>
-            <i className="material-icons" onClick={toggle}>{this.state.paused ? 'play_arrow' : 'pause'}</i>
-            <i className="material-icons" onClick={this.props.onNext}>skip_next</i>
-          </div>
-          <div className="volume">
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={this.state.volume}
-              onChange={event => this.setState({ volume: parseFloat(event.target.value) })}
-            />
-          </div>
-          {/* <button disabled={!this.props.hasPrevious} onClick={this.props.onPrevious}>Previous</button> */}
-          {/* <button onClick={toggle}>{this.state.paused ? 'Play' : 'Pause'}</button> */}
-          {/* <button disabled={!this.props.hasNext} onClick={this.props.onNext}>Next</button> */}
+          {this.renderControls(this.state, this.props)}
+          <Volume level={this.state.volume} onChange={volume => this.setState({ volume })} />
         </div>
       <div id="right">
         <input
@@ -80,13 +92,14 @@ class Player extends React.Component {
             onChange={this.seek}
             className="seek-bar"
         />
+        <h3>Stevie Wonder</h3>
       </div>
       {/* <div className="line" /> */}
       <div id="cassette">
-          <h2>{this.props.track}</h2>
+          <h2>Superstitious</h2>
           <div className="inner">
-            <div className="wheel" style={{ borderWidth: 50 }} />
-            <div className="wheel" style={{ borderWidth: 10 }} />
+            <Wheel playing={!this.state.paused} width={leftProgress} top={10} />
+            <Wheel playing={!this.state.paused} width={rightProgress} top={10} alignRight />
           </div>
         </div>
 
@@ -94,16 +107,7 @@ class Player extends React.Component {
             key={this.state.index}
             fade={15}
             onPlaying={(position, time, duration) => this.setState({ position, time, duration })}
-            onEnded={() => {
-                if (!this.props.hasNext) return;
-                this.props.onNext(); // Order is VERY important, call setState after onNext
-                this.setState({
-                  index: this.state.index + 1,
-                  time: 0,
-                  position: 0,
-                  trackPosition: 0,
-                });
-              }}
+            onEnded={this.handleEnd}
             src={this.props.track}
             playing={!this.state.paused}
             position={parseInt(this.state.trackPosition, 10)}

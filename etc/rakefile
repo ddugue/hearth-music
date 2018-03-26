@@ -21,9 +21,10 @@ task :template do
 end
 
 task :assets do
-  newdir "dist/"
-  sh "cp assets/cassette.svg dist/cassette.svg"
-  sh "cp assets/hole.svg dist/hole.svg"
+  newdir "dist/img"
+  # sh "cp assets/cassette.svg dist/cassette.svg"
+  # sh "cp assets/hole.svg dist/hole.svg"
+  sh "cp src/img/wheel.png dist/img/wheel.png"
 end
 
 task :javascript do
@@ -37,4 +38,4 @@ task :sass do
   sh "#{$sass} src/css/base.scss > dist/css/base.css"
 end
 
-task :default => [:sass, :javascript]
+task :default => [:sass, :javascript, :assets]
