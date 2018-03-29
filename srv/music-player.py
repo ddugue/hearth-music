@@ -1,4 +1,4 @@
-from pydub import AudioSegment
+# from pydub import AudioSegment
 from flask import Flask, jsonify, request, abort, send_file, Response
 from models import db, Genre, Album, Track
 import utils
@@ -12,7 +12,7 @@ db.init_app(app)
 def hello_world():
     genres = list(Genre.query.all())
     albums = list(Album.query.all())
-
+    return '<audio src="http://localhost:5000/songs/f05370cf-6024-4b1a-9c4a-74edadcebcd3" controls type="audio/ogg" />'
     return jsonify(albums)
 
 @app.route('/albums')
@@ -36,7 +36,7 @@ def album(album_id):
 @app.route('/albums/<int:album_id>/tracks')
 def album_tracks(album_id):
     """ Return tracks that are in an album """
-    tracks = Track.query.filter_by(album_id=album_id).order_by(Track.disk.asc(), Track.track.asc())
+    tracks = Track.query.filter_by(album_id=album_id).order_by(Track.track.asc())
     return jsonify([track.serialize() for track in tracks])
 
 @app.route('/cover/<uuid>')
@@ -46,38 +46,44 @@ def cover(uuid):
     if not album or not album.cover: abort(404)
     filename = album.cover
     if filename.endswith('png'):
-        return send_file(filename, mimetype='image/png', cache_timeout=60 * 60 * 24 * 365)
-    return send_file(filename, mimetype='image/jpg', cache_timeout=60 * 60 * 24 * 365)
+        return send_file(filename, mimetype='image/png', cache_timeout=60 * 60 * 24 * 365, conditional=True)
+    return send_file(filename, mimetype='image/jpg', cache_timeout=60 * 60 * 24 * 365, conditional=True)
 
 @app.route('/songs/<uuid>')
 def music(uuid):
     """ Return a cacheable track music """
-    seek = request.args.get('seek', 0, type=int) # In seconds
     track = Track.query.filter_by(uuid=uuid).first()
     if not track or not track.filepath: abort(404)
-    filename = track.filepath
-    if filename.endswith('m4a'):
-        f = AudioSegment.from_file(filename, "m4a")
+    # filename = track.filepath
 
-        if seek:
-            f = f[seek * 1000:]
+    # range_header = request.headers.get('Range', 'bytes=0-')
+    # from_bytes, until_bytes = range_header.replace('bytes=', '').split('-')
+    # from_bytes = int(from_bytes)
+    # if not until_bytes:
+    #     until_bytes = from_bytes + int(1024 * 1024 * 3) # Default size is 3MB
 
-        output = io.BytesIO()
-        f.export(output)
+    # until_bytes = min(int(until_bytes), track.size)
 
-        def generate():
-            for chunk in iter(lambda: output.read(4096), b''):
-                yield chunk
-        return Response(generate(), mimetype='audio/mp4')
-    else:
-        def generate():
-            f = open(filename, "rb")
-            if seek:
-                f.seek(track.bitrate * seek // 8)
+    # # Build response
+    # fi = open(track.filepath, "rb")
+    # fi.seek(from_bytes)
+    # # def generate_data_from_response(f, chunk=8192):
+    # #     for data_chunk in iter(lambda: f.read(chunk), b''):
+    # #         yield data_chunk
 
-            for chunk in iter(lambda: f.read(4096), b''):
-                yield chunk
-        return Response(generate(), mimetype='audio/mpeg')
+    # if request.headers.get('Range') is not None:
+    #     rv = Response(generate_data_from_response(fi), 206, mimetype='audio/ogg', direct_passthrough=True)
+    #     rv.headers.add('Accept-Ranges', 'bytes')
+    #     rv.headers.add('Content-Range', 'bytes %s-%s/%s' % (from_bytes, until_bytes, track.size))
+    #     rv.headers.add('Content-Length', str(until_bytes - from_bytes))
+    #     return rv
+    # rv = Response(generate_data_from_response(fi), 200, mimetype='audio/ogg', direct_passthrough=True)
+    # rv.headers.add('Accept-Ranges', 'bytes')
+
+    # return rv
+    return send_file(track.filepath, conditional=True)
+
+
 #-- CLI Commands
 import click
 import os

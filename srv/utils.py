@@ -1,4 +1,4 @@
-from pydub import AudioSegment
+# from pydub import AudioSegment
 import os
 
 def convert_to_mp3(dirpath, filename, delete=False):

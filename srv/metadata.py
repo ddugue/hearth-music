@@ -118,6 +118,32 @@ def get_track_info_mp3(filepath, tags, stream, cover):
         "filepath": filepath,
     }
 
+def get_track_info_opus(filepath, tags, stream, cover):
+
+    # for k, v in tags:
+    #     print(k)
+    #     print(v)
+    return {
+        "title": extract(tags.get("TITLE")),
+        "track": extract(tags.get("TRACK")),
+        "artists": tags.get('ARTIST'),
+        "albumartist": extract(tags.get("ALBUMARTIST")),
+        "album": extract(tags.get("ALBUM")),
+        # "discogs_id": bytes(discogs).decode('utf-8') if discogs else None,
+        "musicbrainz_song_id": extract(tags.get("MUSICBRAINZ_TRACKID")),
+        "musicbrainz_album_id":extract(tags.get("MUSICBRAINZ_ALBUMID")),
+        # "musicbrainz_artist_id":tags.get("MUSICBRAINZ_ARTISTID"),
+        "musicbrainz_albumartist_id":extract(tags.get("MUSICBRAINZ_ALBUMARTISTID")),
+        # "disk": sanitize_disk(extract(tag('TPOS'))),
+        "year": extract(tags.get("YEAR")),
+        "genres": tags.get("GENRE"),
+        "length": stream.length,
+        # "bitrate": stream.bitrate,
+        "size": os.path.getsize(filepath),
+        "cover": cover,
+        "filepath": filepath,
+    }
+
 COVERS = {}
 def find_cover(folder):
     """ Find the cover file base on a folder """
@@ -144,4 +170,6 @@ def get_track_info(dirpath, f):
         return get_track_info_mp3(filepath, track.tags, track.info, cover)
     if isinstance(track.tags, mutagen.mp4.MP4Tags):
         return get_track_info_mp4(filepath, track.tags, track.info, cover)
+    if isinstance(track, mutagen.oggopus.OggOpus):
+        return get_track_info_opus(filepath, track.tags, track.info, cover)
     raise ValueError("No parser for file format")
