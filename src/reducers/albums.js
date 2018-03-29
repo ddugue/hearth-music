@@ -1,3 +1,5 @@
+import { ALBUMS } from '../actions/types';
+
 // List of all albums
 const DEFAULT_STATE = {
   '1': {
@@ -62,8 +64,14 @@ const DEFAULT_STATE = {
   },
 };
 
+function parseAlbum({ name, year, cover, artist }) {
+}
+
 export default function (state = DEFAULT_STATE, action) {
   switch (action.type) {
+  case ALBUMS.RECEIVED:
+    return parseAlbum
+
   }
   return state;
 }

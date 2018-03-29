@@ -8,7 +8,7 @@ class AlbumsView extends React.Component {
 
   renderAlbum = ({ name, artist, cover }) => (
     <figure>
-      <img src={cover} />
+      <img src={cover} alt={name} />
       <figcaption>
         <h3>{name}</h3>
         <span>{artist.name}</span>
@@ -35,5 +35,5 @@ class AlbumsView extends React.Component {
 export default connect(
   state => ({
     albums: state.albums,
-  })
+  }),
 )(AlbumsView);
