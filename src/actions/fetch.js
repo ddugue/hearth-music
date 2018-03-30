@@ -1,16 +1,15 @@
 import { ALBUMS, ALBUM_TRACKS } from '../actions/types';
 
-export function albums(page = 0) {
+export function albums(page = 1) {
   return {
     type: ALBUMS.REQUESTED,
     page,
   };
 }
 
-export function albumTracks(album, page = 0) {
+export function albumTracks(album) {
   return {
-    type: ALBUM_TRACKS.FETCH,
+    type: ALBUM_TRACKS.REQUESTED,
     album,
-    page,
   };
 }

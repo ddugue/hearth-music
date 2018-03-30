@@ -1,7 +1,7 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 
 import { fetchJSON } from '../utils/requests';
-import { ALBUMS } from '../actions/types';
+import { ALBUMS, ALBUM_TRACKS } from '../actions/types';
 
 export function* albumsList(evt) {
   try {
@@ -13,6 +13,15 @@ export function* albumsList(evt) {
 }
 
 
+export function* albumsTrackList(evt) {
+  try {
+    const response = yield call(fetchJSON, `/albums/${evt.album}/tracks`);
+    yield put({ type: ALBUM_TRACKS.RECEIVED, data: response, album: evt.album });
+  } catch (e) {
+    yield put({ type: ALBUM_TRACKS.FAILED, error: e });
+  }
+}
 export default function* scheduleWatcher() {
   yield takeLatest(ALBUMS.REQUESTED, albumsList);
+  yield takeLatest(ALBUM_TRACKS.REQUESTED, albumsTrackList);
 }

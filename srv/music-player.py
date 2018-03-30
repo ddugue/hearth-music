@@ -1,5 +1,6 @@
 # from pydub import AudioSegment
 from flask import Flask, jsonify, request, abort, send_file, Response
+from flask_cors import CORS, cross_origin
 from models import db, Genre, Album, Track
 import utils
 import io
@@ -7,13 +8,13 @@ import io
 app = Flask(__name__)
 app.config.from_json('../etc/config.json')
 db.init_app(app)
+CORS(app)
 
 @app.route('/')
 def hello_world():
     genres = list(Genre.query.all())
     albums = list(Album.query.all())
     return '<audio src="http://localhost:5000/songs/f05370cf-6024-4b1a-9c4a-74edadcebcd3" controls type="audio/ogg" />'
-    return jsonify(albums)
 
 @app.route('/albums')
 def albums():

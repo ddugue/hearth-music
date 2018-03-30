@@ -6,7 +6,7 @@ import:
 paths:
   default: $albumartist/$album%aunique{} ($year)/$track - $title
 
-plugins: fetchart convert
+plugins: fetchart convert chroma
 convert:
   auto: true
   quiet: false

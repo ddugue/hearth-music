@@ -1,5 +1,5 @@
 #!/bin/sh
-sudo pacman -Sy opus
+sudo pacman -Sy opus chromaprint
 
 rm -fr var/
 rm -fr node_modules/

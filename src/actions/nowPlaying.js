@@ -1,4 +1,4 @@
-import { NEXT_TRACK, PREVIOUS_TRACK } from '../actions/types';
+import { NEXT_TRACK, PREVIOUS_TRACK, PLAY } from '../actions/types';
 
 export function nextTrack() {
   return {
@@ -9,5 +9,12 @@ export function nextTrack() {
 export function previousTrack() {
   return {
     type: PREVIOUS_TRACK,
+  };
+}
+
+export function play(track) {
+  return {
+    type: PLAY,
+    track,
   };
 }

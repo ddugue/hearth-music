@@ -7,6 +7,7 @@ function HTTP_REQUEST(name) {
 }
 export const NEXT_TRACK = 'NEXT_TRACK';
 export const PREVIOUS_TRACK = 'PREVIOUS_TRACK';
+export const PLAY = 'PLAY';
 
 export const ALBUMS = HTTP_REQUEST('ALBUMS');
 export const ALBUM_TRACKS = HTTP_REQUEST('ALBUM_TRACKS');

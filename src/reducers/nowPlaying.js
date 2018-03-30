@@ -1,4 +1,4 @@
-import { NEXT_TRACK, PREVIOUS_TRACK } from '../actions/types';
+import { NEXT_TRACK, PREVIOUS_TRACK, PLAY } from '../actions/types';
 
 const DEFAULT_STATE = {
   index: 0,
@@ -20,7 +20,12 @@ export default function (state = DEFAULT_STATE, action) {
       if (state.index > 0) {
         return { ...state, index: state.index - 1 };
       }
-      break;
+    break;
+  case PLAY:
+    return {
+      ...state,
+      queue: state.queue.concat([action.track]),
+      index: state.queue.length };
   }
   return state;
 }

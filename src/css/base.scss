@@ -96,7 +96,13 @@ h1, h2, h3 {
     margin: 0;
     line-height: 1.3em;
 }
-
+#album {
+    @extend %paper-stripe;
+    padding:1em;
+    // @include hole(10px, 20px, 30px);
+    width: 100%;
+    min-height: 300px;
+}
 #albums {
     display: flex;
 

@@ -8,6 +8,7 @@ import { ConnectedRouter } from 'react-router-redux';
 import Application from './components/Application';
 import HomeView from './views/Home';
 import AlbumsView from './views/Albums';
+import AlbumView from './views/Album';
 import ArtistsView from './views/Artists';
 import SongsView from './views/Songs';
 import SearchView from './views/Search';
@@ -16,11 +17,11 @@ import Navbar from './components/Navbar';
 import View from './components/View';
 
 
-/* import runSaga from './sagas';*/
+import runSaga from './sagas';
 import { store, sagaMiddleware, history } from './store';
 // injectTapEventPlugin();
 
-/* runSaga(sagaMiddleware);*/
+runSaga(sagaMiddleware);
 /* console.log('Init', ConnectedRouter);*/
 /* if (_FIXTURE && _DEBUG) {
  *   store = createStore(reducers, composeWithDevTools(applyMiddleware(middleware, sagaMiddleware)));
@@ -35,6 +36,7 @@ render((
         <Navbar />
         <View exact path="/" component={HomeView} />
         <View exact path="/albums" component={AlbumsView} />
+        <Route path="/album/:id" component={AlbumView} />
         <View exact path="/songs" component={SongsView} />
         <View exact path="/artists" component={ArtistsView} />
         <View exact path="/search" component={SearchView} />
