@@ -3,9 +3,6 @@ import { NEXT_TRACK, PREVIOUS_TRACK, PLAY } from '../actions/types';
 const DEFAULT_STATE = {
   index: 0,
   queue: [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
   ],
 };
 
@@ -20,12 +17,13 @@ export default function (state = DEFAULT_STATE, action) {
       if (state.index > 0) {
         return { ...state, index: state.index - 1 };
       }
-    break;
-  case PLAY:
-    return {
-      ...state,
-      queue: state.queue.concat([action.track]),
-      index: state.queue.length };
+      break;
+    case PLAY:
+      return {
+        ...state,
+        queue: state.queue.concat([action.track]),
+        index: state.queue.length,
+      };
   }
   return state;
 }

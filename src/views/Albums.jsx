@@ -24,7 +24,7 @@ class AlbumsView extends React.Component {
 
   handleInterval = () => {
     if (this.props.loading) {
-      const tick = ((this.state.loadingTick + 1) % 3) + 1
+      const tick = ((this.state.loadingTick + 1) % 3) + 1;
       this.setState({ loadingTick: tick });
     }
   }
@@ -38,8 +38,8 @@ class AlbumsView extends React.Component {
     clearInterval(this.interval);
   }
 
-  renderAlbum = ({ id, name, artist, cover }) => (
-    <Link key={id} to={`/album/${id}`}>
+  renderAlbum = ({ uuid, name, artist, cover }) => (
+    <Link key={uuid} to={`/album/${uuid}`}>
       <figure>
         <img src={ROOT_URL + cover} alt={name} />
         <figcaption>
@@ -57,7 +57,7 @@ class AlbumsView extends React.Component {
 
   renderLoading = ({ albums, loading }) => {
     if (!loading || albums.length > 0) return null;
-    return (<h2>Loading{'.'.repeat(this.state.loadingTick)}</h2>)
+    return (<h2>Loading{'.'.repeat(this.state.loadingTick)}</h2>);
   }
 
   render() {

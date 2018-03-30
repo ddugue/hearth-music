@@ -36,7 +36,7 @@ render((
         <Navbar />
         <View exact path="/" component={HomeView} />
         <View exact path="/albums" component={AlbumsView} />
-        <Route path="/album/:id" component={AlbumView} />
+        <Route path="/album/:uuid" component={AlbumView} />
         <View exact path="/songs" component={SongsView} />
         <View exact path="/artists" component={ArtistsView} />
         <View exact path="/search" component={SearchView} />

@@ -8,17 +8,17 @@ const DEFAULT_STATE = {
 
 export default function (state = DEFAULT_STATE, action) {
   switch (action.type) {
-  case ALBUMS.REQUESTED:
-    return {
-      ...state,
-      albums: true,
-    }
-  case ALBUMS.RECEIVED:
-  case ALBUMS.FAILED:
-    return {
-      ...state,
-      albums: false,
-    }
+    case ALBUMS.REQUESTED:
+      return {
+        ...state,
+        albums: true,
+      };
+    case ALBUMS.RECEIVED:
+    case ALBUMS.FAILED:
+      return {
+        ...state,
+        albums: false,
+      };
   }
   return state;
 }

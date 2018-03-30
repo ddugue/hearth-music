@@ -5,7 +5,7 @@ import { ALBUMS, ALBUM_TRACKS } from '../actions/types';
 
 export function* albumsList(evt) {
   try {
-    const response = yield call(fetchJSON, `/albums?page=${evt.page}`);
+    const response = yield call(fetchJSON, `/albums?page=${evt.page}&a=2`);
     yield put({ type: ALBUMS.RECEIVED, data: response });
   } catch (e) {
     yield put({ type: ALBUMS.FAILED, error: e });

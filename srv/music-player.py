@@ -34,7 +34,7 @@ def album(album_id):
     if not album: abort(404)
     return jsonify(album.serialize())
 
-@app.route('/albums/<int:album_id>/tracks')
+@app.route('/albums/<album_id>/tracks')
 def album_tracks(album_id):
     """ Return tracks that are in an album """
     tracks = Track.query.filter_by(album_id=album_id).order_by(Track.track.asc())

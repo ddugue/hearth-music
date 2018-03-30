@@ -4,29 +4,32 @@ import { ALBUMS, ALBUM_TRACKS } from '../actions/types';
 const DEFAULT_STATE = {
 };
 
-function parseAlbum({ id, name, year, cover, artist }) {
+function parseAlbum({ name, year, cover, artist, uuid }) {
   return {
     name,
     year,
     cover,
     artist,
-    id,
-  }
+    // id,
+    uuid,
+  };
 }
 
 export default function (state = DEFAULT_STATE, action) {
   switch (action.type) {
-  case ALBUMS.RECEIVED:
-    const items = action.data.items;
-    for (let i = 0; i < items.length; i++) {
-      state[items[i].id] = Object.assign({}, state[items[i].id] || {}, parseAlbum(items[i]));
-    }
-    return state;
-
-  case ALBUM_TRACKS.RECEIVED:
-    console.log(action.album, action.data);
-    state[action.album] = Object.assign({}, state[action.album], {tracks: action.data});
-    return Object.assign({}, state);
+    case ALBUMS.RECEIVED:
+      return action.data.items.reduce((result, item) => {
+        result[item.uuid] = Object.assign({}, state[item.uuid] || {}, parseAlbum(item));
+        return result;
+      }, state);
+    case ALBUM_TRACKS.RECEIVED:
+      state[action.album] = Object.assign(
+        {},
+        state[action.album],
+        { tracks: action.data.map(t => t.uuid) },
+      );
+      return Object.assign({}, state);
+    default:
+      return state;
   }
-  return state;
 }

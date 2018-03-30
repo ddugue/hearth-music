@@ -68,7 +68,7 @@ class Artist(db.Model):
         return {
             "id": self.id,
             "uuid": self.uuid,
-            "uri":"/artists/%s" % self.id,
+            "uri":"/artists/%s" % self.uuid if self.uuid else None,
             "name": self.name,
         }
 
@@ -78,7 +78,7 @@ class Artist(db.Model):
 class Album(db.Model):
     __tablename__ = 'album'
 
-    id = Column(Integer, primary_key=True)
+    # id = Column(Integer, primary_key=True)
     name = Column(String(128), index=True)
     year = Column(Integer)
 
@@ -86,18 +86,18 @@ class Album(db.Model):
     artist_id = Column(Integer, ForeignKey('artist.id'), nullable=False)
 
     tracks = relationship('Track', backref=db.backref('album', lazy='joined'), lazy=True)
-    uuid = Column(String(32), index=True)
+    uuid = Column(String(32), primary_key=True)
 
     def __repr__(self):
         return u'<Album {0.artist} - {0.name}>'.format(self)
 
     def serialize(self):
         return {
-            "url": "/albums/%s" % self.id,
-            "id": self.id,
+            "uri": "/albums/%s" % self.uuid,
+            "tracks_uri": "/albums/%s/tracks" % self.uuid,
+            # "id": self.id,
             "name": self.name,
             "cover": "/cover/%s" % self.uuid,
-            "tracks": "/albums/%s/tracks" % self.id,
             "uuid": self.uuid,
             "artist": self.artist.serialize(),
         }
@@ -123,19 +123,19 @@ class Album(db.Model):
 
 
 tracks_genre = db.Table('track_genre',
-    Column('track_id', Integer, ForeignKey('track.id'), primary_key=True),
+    Column('track_id', Integer, ForeignKey('track.uuid'), primary_key=True),
     Column('genre_id', Integer, ForeignKey('genre.id'), primary_key=True)
 )
 
 tracks_artist = db.Table('track_artist',
-    Column('track_id', Integer, ForeignKey('track.id'), primary_key=True),
+    Column('track_id', Integer, ForeignKey('track.uuid'), primary_key=True),
     Column('artist_id', Integer, ForeignKey('artist.id'), primary_key=True)
 )
 
 class Track(db.Model):
     __tablename__ = 'track'
 
-    id = Column(Integer, primary_key=True)
+    # id = Column(Integer, primary_key=True)
 
     title = Column(String(128), index=True)
     filepath = Column(String(128))
@@ -145,23 +145,23 @@ class Track(db.Model):
 
     track = Column(Integer, index=True)
 
-    album_id = Column(Integer, ForeignKey('album.id'))
+    album_id = Column(Integer, ForeignKey('album.uuid'))
 
     artists = relationship('Artist', secondary=tracks_artist, lazy='subquery',
                            backref=backref('tracks', lazy=True))
     genres = relationship('Genre', secondary=tracks_genre, lazy='subquery',
                            backref=backref('tracks', lazy=True))
 
-    uuid = Column(String(32), index=True) #Musicbrainz id
+    uuid = Column(String(32), primary_key=True) #Musicbrainz id
 
     def serialize(self):
         return {
-            "id": self.id,
+            # "id": self.id,
+            "url": "/songs/%s" % self.uuid,
             "uuid": self.uuid,
             "title": self.title,
             "track": self.track,
             "length": self.length,
-            "music": "/songs/%s" % self.uuid,
             "album": self.album.serialize(),
             "artists": [artist.serialize() for artist in self.artists],
             "genres": [genre.serialize() for genre in self.genres],
