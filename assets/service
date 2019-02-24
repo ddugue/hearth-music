@@ -1,0 +1,12 @@
+[Unit]
+Description=VideoOnLAN Service
+After=network.target
+
+[Service]
+Type=forking
+User=vlcd
+ExecStart=/usr/bin/vlc --daemon --syslog -I http --http-port 8090 --http-password abc123 --control dbus
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

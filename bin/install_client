@@ -1,0 +1,8 @@
+#!/bin/sh
+
+sudo pip install pydbus
+sudo pacman -Sy vlc
+
+useradd -c "VLC daemon" -d / -G audio -M -p \! -r -s /usr/bin/nologin -U vlcd
+cp assets/service /etc/systemd/system/vlc.service
+chmod +x /etc/systemd/system/vlc.service
