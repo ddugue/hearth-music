@@ -53,7 +53,7 @@ class Track(db.Model):
     title = Column(String(128), index=True)
     album_id = Column(Integer, ForeignKey('album.id'))
 
-    filepath = Column('path', Binary)
+    path = Column(Binary)
     artist = Column(String(128))
     track = Column(Integer)
     tracktotal = Column(Integer)
@@ -61,6 +61,10 @@ class Track(db.Model):
     uuid = Column('mb_trackid', String(32))
     length = Column(Float)
 
+    @property
+    def filepath(self):
+        "Return the filepath of the song file"
+        return self.path.decode('utf-8')
 
     def serialize(self):
         "Return a JSON-serializable version of this object"
