@@ -35,7 +35,7 @@ class Album(db.Model):
         "Return a JSON-serializable version of this object"
         return {
             "uri": "/albums/%s" % self.uuid,
-            "tracks_uri": "/albums/%s/tracks" % self.id,
+            "tracks_uri": "/albums/%s/tracks" % self.uuid,
             "name": self.name,
             "cover": "/cover/%s" % self.uuid,
             "uuid": self.uuid,
@@ -51,7 +51,7 @@ class Track(db.Model):
     id = Column(Integer, primary_key=True)
 
     title = Column(String(128), index=True)
-    album_id = Column(Integer, ForeignKey('album.id'))
+    album_id = Column(Integer, ForeignKey('albums.id'))
 
     path = Column(Binary)
     artist = Column(String(128))

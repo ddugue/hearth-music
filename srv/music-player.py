@@ -34,7 +34,9 @@ def album_view(album_id):
 @app.route('/albums/<album_id>/tracks')
 def album_tracks_view(album_id):
     """ Return tracks that are in an album """
-    tracks = Track.query.filter_by(album_id=album_id).order_by(Track.track.asc())
+    tracks = Track.query.join(Album)\
+                        .filter(Album.uuid == album_id)\
+                        .order_by(Track.track.asc())
     return jsonify([track.serialize() for track in tracks])
 
 @app.route('/cover/<album_id>')
