@@ -26,6 +26,10 @@ class Album(db.Model):
     def __repr__(self):
         return u'<Album {0.artist} - {0.name}>'.format(self)
 
+    @property
+    def cover_filepath(self):
+        return self.cover.decode('utf-8')
+
     def serialize(self):
         return {
             "uri": "/albums/%s" % self.uuid,

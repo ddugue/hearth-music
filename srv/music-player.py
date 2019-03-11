@@ -47,12 +47,11 @@ def cover(album_id):
     album = Album.query.filter_by(uuid=album_id).first()
     if not album or not album.cover: abort(404)
 
-    filename = album.cover
-    print("Filename is %s" % filename)
-    mimetype = 'image/png' if filename.endswith(b'png') else 'image/jpg'
+    filename = album.cover_filepath
+    mimetype = 'image/png' if filename.endswith('png') else 'image/jpg'
     cache = 60 * 60 * 24 * 365 # 1 Year
 
-    return send_file(filename.decode('utf-8'),
+    return send_file(filename,
                      mimetype=mimetype,
                      cache_timeout=cache,
                      conditional=True)
