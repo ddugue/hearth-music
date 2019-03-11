@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class Album(db.Model):
+    "Model to proxy objects on beets db 'albums' table"
     __tablename__ = 'albums'
 
     id = Column('id', Integer, primary_key=True)
@@ -31,6 +32,7 @@ class Album(db.Model):
         return self.cover.decode('utf-8')
 
     def serialize(self):
+        "Return a JSON-serializable version of this object"
         return {
             "uri": "/albums/%s" % self.uuid,
             "tracks_uri": "/albums/%s/tracks" % self.id,
@@ -43,6 +45,7 @@ class Album(db.Model):
         }
 
 class Track(db.Model):
+    "Model to proxy objects on beets db 'items' table"
     __tablename__ = 'items'
 
     id = Column(Integer, primary_key=True)
@@ -60,6 +63,7 @@ class Track(db.Model):
 
 
     def serialize(self):
+        "Return a JSON-serializable version of this object"
         return {
             # "id": self.id,
             "url": "/songs/%s" % self.uuid,
