@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/bin/vlc --daemon --syslog -I http --http-port 8090 --http-password abc123 --control dbus
