@@ -5,5 +5,5 @@ export FLASK_APP=music-player.py
 export FLASK_DEBUG=1
 
 set -e
-rake -f etc/rakefile
+# rake -f etc/rakefile
 cd srv && ../var/venv/bin/flask run --with-threads
