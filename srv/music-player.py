@@ -29,11 +29,11 @@ def albums():
     })
 
 @app.route('/albums/<album_id>')
-def album(album_id):
+def album_view(album_id):
     """ Return information on a single album """
-    single_album = Album.query.filter_by(uuid=album_id).one_or_none()
-    if not single_album: abort(404)
-    return jsonify(single_album.serialize())
+    album = Album.query.filter_by(uuid=album_id).one_or_none()
+    if not album: abort(404)
+    return jsonify(album.serialize())
 
 # @app.route('/albums/<album_id>/tracks')
 # def album_tracks(album_id):
@@ -41,15 +41,21 @@ def album(album_id):
 #     tracks = Track.query.filter_by(album_id=album_id).order_by(Track.track.asc())
 #     return jsonify([track.serialize() for track in tracks])
 
-# @app.route('/cover/<uuid>')
-# def cover(uuid):
-#     """ Return a cacheable cover for an album """
-#     album = Album.query.filter_by(uuid=uuid).first()
-#     if not album or not album.cover: abort(404)
-#     filename = album.cover
-#     if filename.endswith('png'):
-#         return send_file(filename, mimetype='image/png', cache_timeout=60 * 60 * 24 * 365, conditional=True)
-#     return send_file(filename, mimetype='image/jpg', cache_timeout=60 * 60 * 24 * 365, conditional=True)
+@app.route('/cover/<album_id>')
+def cover(album_id):
+    """ Return a cacheable cover for an album """
+    album = Album.query.filter_by(uuid=album_id).first()
+    if not album or not album.cover: abort(404)
+
+    filename = album.cover
+    print("Filename is %s" % filename)
+    mimetype = 'image/png' if filename.endswith(b'png') else 'image/jpg'
+    cache = 60 * 60 * 24 * 365 # 1 Year
+
+    return send_file(filename.decode('utf-8'),
+                     mimetype=mimetype,
+                     cache_timeout=cache,
+                     conditional=True)
 
 # @app.route('/songs/<uuid>')
 # def music(uuid):

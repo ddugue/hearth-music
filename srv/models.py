@@ -48,6 +48,7 @@ def index_exists(name):
     return result.ix_exists
 
 def create_indexes(app):
+    "Used to create indexes in the beets database for better performance"
     print("Creating indexes...")
     with app.app_context():
         if not index_exists("album_artist_index"):
