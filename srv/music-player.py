@@ -1,4 +1,3 @@
-
 import utils
 import io
 
@@ -42,7 +41,7 @@ def album_tracks_view(album_id):
 @app.route('/cover/<album_id>')
 def cover_view(album_id):
     """ Return a cacheable cover for an album """
-    album = Album.query.filter_by(uuid=album_id).first()
+    album = Album.query.filter_by(uuid=album_id).one_or_none()
     if not album or not album.cover: abort(404)
 
     filename = album.cover_filepath
@@ -71,7 +70,7 @@ def artists_view():
                            .paginate(page, 20)
     return jsonify({
         "page": page,
-        "next": ("/albums?page=%s" % paginator.next_num) if paginator.has_next else None,
+        "next": ("/artists?page=%s" % paginator.next_num) if paginator.has_next else None,
         "items": dict(paginator.items)
     })
 
@@ -82,3 +81,51 @@ def artist_view(artist_id):
     return jsonify(
         [album.serialize() for album in albums],
     )
+
+@app.route('/genres')
+def genres_view():
+    """ Return a list of artist from the database """
+    genres = Album.query.group_by(Album.genre)\
+                        .with_entities(Album.genre)
+    return jsonify([genre[0] for genre in genres])
+
+@app.route('/genres/<genre>')
+def genre_view(genre):
+    """ Return a list of artist from the database """
+    page = request.args.get('page', 1, type=int)
+    paginator = Album.query.filter(Album.genre.ilike(genre))\
+                           .paginate(page, 20)
+    return jsonify({
+        "page": page,
+        "next": ("/genres?page=%s" % paginator.next_num) if paginator.has_next else None,
+        "items": [album.serialize() for album in paginator.items],
+    })
+
+@app.route('/search')
+def search_view():
+    """ Return object matching a search """
+    query = request.args.get('q')
+    length = request.args.get('n', 20, type=int)
+
+    if not query or len(query) <= 3:
+        abort(400, "Must provide a query longer than 3 characters")
+
+    if length > 100:
+        abort(400, "Maximum 100 of results")
+
+    albums = Album.query.filter(Album.name.contains(query))\
+                        .order_by(Album.name.desc())\
+                        .limit(length)
+    artists = Album.query.filter(Album.artist.contains(query))\
+                         .group_by(Album.artist)\
+                         .with_entities(Album.artist_id, Album.artist)\
+                         .limit(length)
+    songs = Track.query.filter(Track.title.contains(query))\
+                       .order_by(Track.title.desc())\
+                       .limit(length)
+
+    return jsonify({
+        "albums": [album.serialize() for album in albums],
+        "artists": dict(artists),
+        "songs": [song.serialize() for song in songs],
+    })
