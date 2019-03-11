@@ -1,7 +1,7 @@
 # from pydub import AudioSegment
 from flask import Flask, jsonify, request, abort, send_file, Response
 from flask_cors import CORS, cross_origin
-from models import db, Album, create_indexes
+from models import db, Album, Track, create_indexes
 import utils
 import io
 
@@ -35,11 +35,11 @@ def album_view(album_id):
     if not album: abort(404)
     return jsonify(album.serialize())
 
-# @app.route('/albums/<album_id>/tracks')
-# def album_tracks(album_id):
-#     """ Return tracks that are in an album """
-#     tracks = Track.query.filter_by(album_id=album_id).order_by(Track.track.asc())
-#     return jsonify([track.serialize() for track in tracks])
+@app.route('/albums/<album_id>/tracks')
+def album_tracks(album_id):
+    """ Return tracks that are in an album """
+    tracks = Track.query.filter_by(album_id=album_id).order_by(Track.track.asc())
+    return jsonify([track.serialize() for track in tracks])
 
 @app.route('/cover/<album_id>')
 def cover(album_id):

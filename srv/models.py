@@ -33,8 +33,7 @@ class Album(db.Model):
     def serialize(self):
         return {
             "uri": "/albums/%s" % self.uuid,
-            "tracks_uri": "/albums/%s/tracks" % self.uuid,
-            # "id": self.id,
+            "tracks_uri": "/albums/%s/tracks" % self.id,
             "name": self.name,
             "cover": "/cover/%s" % self.uuid,
             "uuid": self.uuid,
@@ -42,6 +41,41 @@ class Album(db.Model):
             "artist_id": self.artist_id,
             "year": self.year,
         }
+
+class Track(db.Model):
+    __tablename__ = 'items'
+
+    id = Column(Integer, primary_key=True)
+
+    title = Column(String(128), index=True)
+    album_id = Column(Integer, ForeignKey('album.id'))
+
+    filepath = Column('path', Binary)
+    artist = Column(String(128))
+    track = Column(Integer)
+    tracktotal = Column(Integer)
+
+    uuid = Column('mb_trackid', String(32))
+    length = Column(Float)
+
+
+    def serialize(self):
+        return {
+            # "id": self.id,
+            "url": "/songs/%s" % self.uuid,
+            "uuid": self.uuid,
+            "title": self.title,
+            "track": self.track,
+            "length": self.length,
+            "artist": self.artist,
+        }
+
+    def __repr__(self):
+        return u'<Track {0.title}>'.format(self)
+
+###################
+# Utils functions #
+###################
 
 def index_exists(name):
     "Checks wether index currently exist on Table"
@@ -55,12 +89,19 @@ def create_indexes(app):
     "Used to create indexes in the beets database for better performance"
     print("Creating indexes...")
     with app.app_context():
+        # Album model
         if not index_exists("album_artist_index"):
             Index("album_artist_index", Album.__table__.columns.albumartist).create(db.engine)
         if not index_exists("album_name_index"):
             Index("album_name_index", Album.__table__.columns.album).create(db.engine)
         if not index_exists("album_uuid_index"):
             Index("album_uuid_index", Album.__table__.columns.mb_albumid, unique=True).create(db.engine)
+
+        # Track model
+        if not index_exists("track_uuid_index"):
+            Index("track_uuid_index", Track.__table__.columns.mb_trackid, unique=True).create(db.engine)
+        if not index_exists("track_title_index"):
+            Index("track_title_index", Track.__table__.columns.title).create(db.engine)
 
 
 # class Genre(db.Model):
